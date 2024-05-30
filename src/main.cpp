@@ -14,15 +14,27 @@ std::vector<std::unique_ptr<rt::RenderCommand>> getRenderCommands()
     return commands;
 }
 
+bool handleEvents()
+{
+    SDL_Event event;
+    while (SDL_PollEvent(&event))
+    {
+        if (event.type == SDL_QUIT)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 void runProgram()
 {
     rt::Window window;
     window.renderer.addCommands(getRenderCommands());
     auto targetTexture = window.renderer.makeTargetTexture(rt::Size{500, 300});
-
-    bool running = true; // TODO: exitable
-    while (running)
+    while (handleEvents())
     {
+        spdlog::log(spdlog::level::info, "WINDOW: {} {}", window.getWidth(), window.getHeight());
         window.renderer.render(targetTexture, window.getSize());
         sleep(1);
     }
