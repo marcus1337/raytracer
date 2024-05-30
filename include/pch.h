@@ -37,4 +37,9 @@
 #include "spdlog/spdlog.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
 
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
 
