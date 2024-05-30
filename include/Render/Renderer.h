@@ -25,8 +25,28 @@ namespace rt
             }
         }
 
+        void addCommand(std::unique_ptr<RenderCommand> command)
+        {
+            renderCommands.push_back(std::move(command));
+        }
+
+        void clearCommands()
+        {
+            renderCommands.clear();
+        }
+
+        void render()
+        {
+            for (const auto &command : renderCommands)
+            {
+                command->render(renderer.get());
+            }
+            SDL_RenderPresent(renderer.get());
+        }
+
     private:
         std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> renderer;
+        std::vector<std::unique_ptr<RenderCommand>> renderCommands;
     };
 
 }
