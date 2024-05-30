@@ -52,6 +52,7 @@ namespace rt
             renderAllCommands();
             setRootTarget();
             targetTexture.renderAsWindowFrame(renderer.get(), windowSize);
+            SDL_RenderPresent(renderer.get());
         }
 
         TargetTexture makeTargetTexture(const Size &size) const
@@ -69,13 +70,12 @@ namespace rt
             {
                 command->render(renderer.get());
             }
-            SDL_RenderPresent(renderer.get());
         }
 
         void clear() const
         {
             setRootTarget();
-            std::make_unique<rt::cmd::Clear>()->render(renderer.get());
+            std::make_unique<rt::cmd::Clear>(SDL_Color{0, 0, 0, 255})->render(renderer.get());
         }
 
         void setTarget(const TargetTexture &targetTexture) const

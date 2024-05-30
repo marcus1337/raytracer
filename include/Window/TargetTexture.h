@@ -11,8 +11,10 @@ namespace rt
         TargetTexture(SDL_Renderer *renderer, const Size &size) : texture(nullptr, SDL_DestroyTexture)
         {
             texture.reset(SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, size.width, size.height));
+            assert(texture);
             SDL_SetTextureBlendMode(texture.get(), SDL_BLENDMODE_BLEND);
         }
+
         void setAsRenderTarget(SDL_Renderer *renderer) const
         {
             SDL_SetRenderTarget(renderer, texture.get());
