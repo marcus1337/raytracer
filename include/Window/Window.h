@@ -10,6 +10,11 @@ namespace rt
         {
         }
 
+        Size getSize() const
+        {
+            return Size{getWidth(), getHeight()};
+        }
+
     private:
         std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> window;
         std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> makeSDLWindow()
@@ -26,6 +31,19 @@ namespace rt
                 480,
                 SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL));
             return std::move(window);
+        }
+
+        int getWidth() const
+        {
+            int width = 0;
+            SDL_GetWindowSize(window.get(), &width, nullptr);
+            return width;
+        }
+        int getHeight() const
+        {
+            int height = 0;
+            SDL_GetWindowSize(window.get(), nullptr, &height);
+            return height;
         }
 
     public:

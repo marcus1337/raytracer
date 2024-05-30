@@ -1,6 +1,8 @@
 #pragma once
 #include "pch.h"
 #include "RenderCommand.h"
+#include "Window/TargetTexture.h"
+#include "Render/Commands/Clear.h"
 
 namespace rt
 {
@@ -43,7 +45,25 @@ namespace rt
             renderCommands.clear();
         }
 
-        void render()
+        void render(const TargetTexture &targetTexture, const Size &windowSize) const
+        {
+            clear();
+            setTarget(targetTexture);
+            renderAllCommands();
+            setRootTarget();
+            targetTexture.renderAsWindowFrame(renderer.get(), windowSize);
+        }
+
+        TargetTexture makeTargetTexture(const Size &size) const
+        {
+            return TargetTexture(renderer.get(), size);
+        }
+
+    private:
+        std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> renderer;
+        std::vector<std::unique_ptr<RenderCommand>> renderCommands;
+
+        void renderAllCommands() const
         {
             for (const auto &command : renderCommands)
             {
@@ -52,9 +72,21 @@ namespace rt
             SDL_RenderPresent(renderer.get());
         }
 
-    private:
-        std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> renderer;
-        std::vector<std::unique_ptr<RenderCommand>> renderCommands;
+        void clear() const
+        {
+            setRootTarget();
+            std::make_unique<rt::cmd::Clear>()->render(renderer.get());
+        }
+
+        void setTarget(const TargetTexture &targetTexture) const
+        {
+            targetTexture.setAsRenderTarget(renderer.get());
+        }
+
+        void setRootTarget() const
+        {
+            SDL_SetRenderTarget(renderer.get(), NULL);
+        }
     };
 
 }

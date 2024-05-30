@@ -8,7 +8,7 @@ namespace rt
     class TargetTexture
     {
     public:
-        TargetTexture(SDL_Renderer *renderer, const Size &size) : texture(nullptr, SDL_DestroyTexture), size(size)
+        TargetTexture(SDL_Renderer *renderer, const Size &size) : texture(nullptr, SDL_DestroyTexture)
         {
             texture.reset(SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, size.width, size.height));
             SDL_SetTextureBlendMode(texture.get(), SDL_BLENDMODE_BLEND);
@@ -23,15 +23,37 @@ namespace rt
             render(renderer, getOffset(windowSize), getScaledSize(windowSize));
         }
 
+        TargetTexture(TargetTexture &&other) noexcept
+            : texture(std::move(other.texture))
+        {
+            other.texture = nullptr;
+        }
+
+        TargetTexture &operator=(TargetTexture &&other) noexcept
+        {
+            if (this != &other)
+            {
+                texture = std::move(other.texture);
+                other.texture = nullptr;
+            }
+            return *this;
+        }
+
+        Size getSize() const
+        {
+            Size size;
+            SDL_QueryTexture(texture.get(), nullptr, nullptr, &size.width, &size.height);
+            return size;
+        }
+
     private:
-        const Size size;
         std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> texture;
         TargetTexture(const TargetTexture &) = delete;
         TargetTexture &operator=(const TargetTexture &) = delete;
 
         Size getScaledSize(const Size &frameSize) const
         {
-            const auto aspectRatio = size.getRatio();
+            const auto aspectRatio = getSize().getRatio();
             const auto frameAspectRatio = frameSize.getRatio();
             const bool biggerRatio = aspectRatio > frameAspectRatio;
             const auto width = biggerRatio ? frameSize.width : static_cast<int>(frameSize.height * aspectRatio);

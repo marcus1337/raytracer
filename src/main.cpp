@@ -9,7 +9,7 @@
 std::vector<std::unique_ptr<rt::RenderCommand>> getRenderCommands()
 {
     std::vector<std::unique_ptr<rt::RenderCommand>> commands;
-    commands.push_back(std::make_unique<rt::cmd::Clear>(SDL_Color{25, 25, 25, 255}));
+    commands.push_back(std::make_unique<rt::cmd::Clear>(SDL_Color{100, 25, 25, 255}));
     commands.push_back(std::make_unique<rt::cmd::Border>(SDL_Rect{0, 0, 100, 50}, 10, SDL_Color{125, 125, 125, 255}));
     return commands;
 }
@@ -18,11 +18,12 @@ void runProgram()
 {
     rt::Window window;
     window.renderer.addCommands(getRenderCommands());
+    auto targetTexture = window.renderer.makeTargetTexture(rt::Size{500, 300});
 
     bool running = true; // TODO: exitable
     while (running)
     {
-        window.renderer.render();
+        window.renderer.render(targetTexture, window.getSize());
         sleep(1);
     }
 }
