@@ -22,5 +22,10 @@ namespace rt
                 height = *it;
             }
         }
+
+        double getRatio() const
+        {
+            return static_cast<double>(width) / static_cast<double>(height);
+        }
     };
 }

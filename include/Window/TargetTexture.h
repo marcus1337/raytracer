@@ -23,29 +23,34 @@ namespace rt
             render(renderer, getOffset(windowSize), getScaledSize(windowSize));
         }
 
-        void render(SDL_Renderer *renderer, const Point &position, const SDL_Rect &dstRect) const
-        {
-            SDL_RenderCopy(renderer, texture.get(), NULL, &dstRect);
-        }
-
     private:
         const Size size;
         std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> texture;
         TargetTexture(const TargetTexture &) = delete;
         TargetTexture &operator=(const TargetTexture &) = delete;
 
-        SDL_Rect getScaledSize(const Size &frameSize) const
+        Size getScaledSize(const Size &frameSize) const
         {
-            SDL_Rect scale;
-
-            return scale;
+            const auto aspectRatio = size.getRatio();
+            const auto frameAspectRatio = frameSize.getRatio();
+            const bool biggerRatio = aspectRatio > frameAspectRatio;
+            const auto width = biggerRatio ? frameSize.width : static_cast<int>(frameSize.height * aspectRatio);
+            const auto height = biggerRatio ? static_cast<int>(frameSize.width / aspectRatio) : frameSize.height;
+            return Size{width, height};
         }
 
         Point getOffset(const Size &frameSize) const
         {
-            Point offset;
+            const auto scaledSize = getScaledSize(frameSize);
+            const auto x = (frameSize.width - scaledSize.width) / 2;
+            const auto y = (frameSize.height - scaledSize.height) / 2;
+            return Point{x, y};
+        }
 
-            return offset;
+        void render(SDL_Renderer *renderer, const Point &position, const Size &dstSize) const
+        {
+            const SDL_Rect dstRect{position.x, position.y, dstSize.width, dstSize.height};
+            SDL_RenderCopy(renderer, texture.get(), NULL, &dstRect);
         }
     };
 }
