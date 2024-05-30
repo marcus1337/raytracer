@@ -4,6 +4,7 @@
 #include "Window/SDLUtil.h"
 #include "Render/Commands/Clear.h"
 #include "Render/Commands/Border.h"
+#include "Window/TargetTexture.h"
 
 std::vector<std::unique_ptr<rt::RenderCommand>> getRenderCommands()
 {
