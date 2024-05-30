@@ -7,41 +7,13 @@ namespace rt
     public:
         Window() : window(nullptr, SDL_DestroyWindow), renderer(nullptr, SDL_DestroyRenderer)
         {
-            if (initSDL())
-            {
-                initWindow();
-                initRenderer();
-            }
-            else
-            {
-                exit(EXIT_FAILURE);
-            }
+            initWindow();
+            initRenderer();
         }
 
     private:
         std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> window;
         std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> renderer;
-
-        bool initSDL() const
-        {
-            static bool initResult = false;
-            if (initResult)
-            {
-                return true;
-            }
-            if (SDL_Init(SDL_INIT_VIDEO) != 0)
-            {
-                spdlog::log(spdlog::level::err, "Failed to init SDL_INIT_VIDEO");
-                return false;
-            }
-            else if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
-            {
-                spdlog::log(spdlog::level::err, "Failed to init IMG_INIT_PNG");
-                return false;
-            }
-            initResult = true;
-            return true;
-        }
 
         void initWindow()
         {
