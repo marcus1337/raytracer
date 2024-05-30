@@ -30,6 +30,14 @@ namespace rt
             renderCommands.push_back(std::move(command));
         }
 
+        void addCommands(std::vector<std::unique_ptr<RenderCommand>> &&commands)
+        {
+            for (auto &command : commands)
+            {
+                addCommand(std::move(command));
+            }
+        }
+
         void clearCommands()
         {
             renderCommands.clear();
