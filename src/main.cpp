@@ -2,11 +2,14 @@
 #include "Canvas.h"
 #include "Window/Window.h"
 #include "Window/SDLUtil.h"
+#include "Render/Commands/Clear.h"
 
 void runProgram()
 {
     rt::Window window;
-    sleep(1);
+    window.renderer.addCommand(std::make_unique<rt::cmd::Clear>(SDL_Color{25, 25, 25, 255}));
+    window.renderer.render();
+    sleep(2);
 }
 
 int main(int argc, char **argv)
