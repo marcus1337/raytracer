@@ -6,6 +6,8 @@
 #include "Render/Commands/Pixels.h"
 #include "Window/Window.h"
 
+#include "Data/Tracing/Camera.h"
+
 namespace rt
 {
     class Frame

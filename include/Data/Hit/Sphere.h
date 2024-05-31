@@ -1,14 +1,12 @@
 #pragma once
 #include "pch.h"
-#include "Data/Transform.h"
+#include "Hittable.h"
 
 namespace rt
 {
-    class Camera
+    class Sphere : public Hittable
     {
     public:
-        Transform transform;
-
     private:
     };
 }

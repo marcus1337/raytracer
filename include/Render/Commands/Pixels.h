@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "Render/RenderCommand.h"
-#include "Data/Tracing/Canvas.h"
+#include "Data/Canvas.h"
 #include "Data/Geometry/Point.h"
 
 namespace rt

@@ -39,6 +39,8 @@
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include <glm/gtc/quaternion.hpp>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
