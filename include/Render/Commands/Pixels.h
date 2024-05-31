@@ -23,13 +23,7 @@ namespace rt
             }
             virtual void render(SDL_Renderer *renderer)
             {
-                SDL_BlendMode oldBlendMode;
-                SDL_GetRenderDrawBlendMode(renderer, &oldBlendMode);
-                SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-
                 renderPixels(renderer);
-
-                SDL_SetRenderDrawBlendMode(renderer, oldBlendMode);
             }
 
         private:

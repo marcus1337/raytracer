@@ -36,7 +36,7 @@ namespace rt
             std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> window(nullptr, SDL_DestroyWindow);
             SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
             SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
-            SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+            SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
             window.reset(SDL_CreateWindow(
                 "Ray-Tracer",
                 SDL_WINDOWPOS_CENTERED,
