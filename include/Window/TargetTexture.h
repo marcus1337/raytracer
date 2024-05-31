@@ -48,6 +48,16 @@ namespace rt
             return size;
         }
 
+        int getWidth() const
+        {
+            return getSize().width;
+        }
+
+        int getHeight() const
+        {
+            return getSize().height;
+        }
+
     private:
         std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> texture;
         TargetTexture(const TargetTexture &) = delete;

@@ -10,7 +10,7 @@ namespace rt
     class Frame
     {
     public:
-        Frame(const rt::Window &window) : targetTexture(window.renderer.makeTargetTexture(rt::Size{500, 300}))
+        Frame(const rt::Window &window) : targetTexture(window.renderer.makeTargetTexture(rt::Size{200, 100}))
         {
         }
 
@@ -29,11 +29,24 @@ namespace rt
             renderer.addCommands(getRenderCommands());
         }
 
+        std::unique_ptr<rt::RenderCommand> makeBorderCommand() const
+        {
+            const int thickness = 10;
+            const auto color = SDL_Color{125, 125, 125, 255};
+            const auto rect = SDL_Rect{0, 0, targetTexture.getWidth(), targetTexture.getHeight()};
+            return std::make_unique<rt::cmd::Border>(rect, thickness, color);
+        }
+
+        std::unique_ptr<rt::RenderCommand> makeClearCommand() const
+        {
+            return std::make_unique<rt::cmd::Clear>(SDL_Color{100, 25, 25, 255});
+        }
+
         std::vector<std::unique_ptr<rt::RenderCommand>> getRenderCommands() const
         {
             std::vector<std::unique_ptr<rt::RenderCommand>> commands;
-            commands.push_back(std::make_unique<rt::cmd::Clear>(SDL_Color{100, 25, 25, 255}));
-            commands.push_back(std::make_unique<rt::cmd::Border>(SDL_Rect{0, 0, 100, 50}, 10, SDL_Color{125, 125, 125, 255}));
+            commands.push_back(makeClearCommand());
+            commands.push_back(makeBorderCommand());
             return commands;
         }
     };
