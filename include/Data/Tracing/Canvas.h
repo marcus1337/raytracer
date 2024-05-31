@@ -1,62 +1,59 @@
 #pragma once
 #include "pch.h"
 #include "Color.h"
+#include "Data/Geometry/Size.h"
 
 namespace rt
 {
-    template <std::size_t Width, std::size_t Height, class T = Color>
     class Canvas
     {
     public:
-        Canvas()
+        Canvas(std::size_t width, std::size_t height) : width(width), height(height)
         {
-            clear(T());
+            data.resize(width * height);
+            clear(Color());
+        }
+        Canvas(const rt::Size &size) : Canvas(size.width, size.height)
+        {
         }
 
-        void clear(const T &value)
+        void clear(const Color &value)
         {
-            data.fill(value);
-        }
-
-        class RowProxy
-        {
-        public:
-            RowProxy(std::array<T, Width> &row) : row(row) {}
-
-            T &operator[](std::size_t col)
+            for (std::size_t i = 0; i < data.size(); i++)
             {
-                return row[col];
+                data[i] = value;
             }
-
-            const T &operator[](std::size_t col) const
-            {
-                return row[col];
-            }
-
-        private:
-            std::array<T, Width> &row;
-        };
-
-        RowProxy operator[](std::size_t row)
-        {
-            return RowProxy(data[row]);
-        }
-        const RowProxy operator[](std::size_t row) const
-        {
-            return RowProxy(const_cast<std::array<T, Width> &>(data[row]));
         }
 
-        constexpr std::size_t getWidth() const
+        std::size_t getWidth() const
         {
-            return Width;
+            return width;
         }
-        constexpr std::size_t getHeight() const
+
+        std::size_t getHeight() const
         {
-            return Height;
+            return height;
+        }
+
+        Color at(std::size_t x, std::size_t y) const
+        {
+            return data.at(getIndex(x, y));
+        }
+
+        void set(std::size_t x, std::size_t y, Color value)
+        {
+            data[getIndex(x, y)] = value;
         }
 
     private:
-        std::array<T, Width * Height> data;
+        std::size_t width;
+        std::size_t height;
+        std::vector<Color> data;
+
+        std::size_t getIndex(std::size_t x, std::size_t y) const
+        {
+            return y * width + x;
+        }
     };
 
 }
