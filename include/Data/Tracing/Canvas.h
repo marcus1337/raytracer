@@ -40,9 +40,27 @@ namespace rt
             return data.at(getIndex(x, y));
         }
 
+        Color at(const Point &point) const
+        {
+            return data.at(getIndex(point.x, point.y));
+        }
+
         void set(std::size_t x, std::size_t y, Color value)
         {
             data[getIndex(x, y)] = value;
+        }
+
+        std::vector<Point> getIndices() const
+        {
+            std::vector<Point> indices;
+            for (std::size_t x = 0; x < getWidth(); x++)
+            {
+                for (std::size_t y = 0; y < getHeight(); y++)
+                {
+                    indices.push_back(Point(x, y));
+                }
+            }
+            return indices;
         }
 
     private:
