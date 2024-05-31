@@ -1,6 +1,5 @@
 #pragma once
 #include "pch.h"
-#include "Data/Canvas.h"
 #include "Window/Window.h"
 #include "Window/TargetTexture.h"
 #include "Window/EventHandler.h"

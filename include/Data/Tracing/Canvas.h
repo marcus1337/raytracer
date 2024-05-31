@@ -1,19 +1,19 @@
 #pragma once
 #include "pch.h"
-#include "Pixel.h"
+#include "Color.h"
 
 namespace rt
 {
-    template <std::size_t Width, std::size_t Height>
+    template <std::size_t Width, std::size_t Height, class T = Color>
     class Canvas
     {
     public:
         Canvas()
         {
-            clear(Pixel());
+            clear(T());
         }
 
-        void clear(const Pixel &value)
+        void clear(const T &value)
         {
             data.fill(value);
         }
@@ -21,20 +21,20 @@ namespace rt
         class RowProxy
         {
         public:
-            RowProxy(std::array<Pixel, Width> &row) : row(row) {}
+            RowProxy(std::array<T, Width> &row) : row(row) {}
 
-            Pixel &operator[](std::size_t col)
+            T &operator[](std::size_t col)
             {
                 return row[col];
             }
 
-            const Pixel &operator[](std::size_t col) const
+            const T &operator[](std::size_t col) const
             {
                 return row[col];
             }
 
         private:
-            std::array<Pixel, Width> &row;
+            std::array<T, Width> &row;
         };
 
         RowProxy operator[](std::size_t row)
@@ -43,7 +43,7 @@ namespace rt
         }
         const RowProxy operator[](std::size_t row) const
         {
-            return RowProxy(const_cast<std::array<Pixel, Width> &>(data[row]));
+            return RowProxy(const_cast<std::array<T, Width> &>(data[row]));
         }
 
         constexpr std::size_t getWidth() const
@@ -56,7 +56,7 @@ namespace rt
         }
 
     private:
-        std::array<Pixel, Width * Height> data;
+        std::array<T, Width * Height> data;
     };
 
 }
