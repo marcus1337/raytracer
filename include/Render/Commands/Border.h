@@ -1,8 +1,8 @@
 #pragma once
 #include "pch.h"
 #include "Render/RenderCommand.h"
-#include "Geometry/Point.h"
-#include "Geometry/Size.h"
+#include "Data/Geometry/Point.h"
+#include "Data/Geometry/Size.h"
 
 namespace rt
 {

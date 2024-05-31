@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
-#include "Geometry/Size.h"
-#include "Geometry/Point.h"
+#include "Data/Geometry/Size.h"
+#include "Data/Geometry/Point.h"
 
 namespace rt
 {
