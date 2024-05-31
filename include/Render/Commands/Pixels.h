@@ -39,9 +39,9 @@ namespace rt
             std::vector<Pixel> getPixels() const
             {
                 std::vector<Pixel> pixels;
-                for (int x = 0; x < canvas.getWidth(); x++)
+                for (std::size_t x = 0; x < canvas.getWidth(); x++)
                 {
-                    for (int y = 0; y < canvas.getHeight(); y++)
+                    for (std::size_t y = 0; y < canvas.getHeight(); y++)
                     {
                         pixels.push_back(Pixel{.position = Point(x, y), .color = canvas.at(x, y)});
                     }
