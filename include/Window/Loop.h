@@ -16,11 +16,23 @@ namespace rt
 
         void run()
         {
+
+            const int targetFPS = 25;
+            const std::chrono::duration<double> frameDuration(1.0 / targetFPS);
+
             while (!eventHandler.hasQuit())
             {
-                eventHandler.processEvents();
-                frame.render(window.renderer, window.getSize());
-                sleep(1);
+
+                auto frameStart = std::chrono::high_resolution_clock::now();
+
+                loopStep();
+
+                auto frameEnd = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> elapsedTime = frameEnd - frameStart;
+                if (elapsedTime < frameDuration)
+                {
+                    std::this_thread::sleep_for(frameDuration - elapsedTime);
+                }
             }
         }
 
@@ -28,5 +40,11 @@ namespace rt
         rt::Window window;
         EventHandler eventHandler;
         Frame frame;
+
+        void loopStep()
+        {
+            eventHandler.processEvents();
+            frame.render(window.renderer, window.getSize());
+        }
     };
 }
