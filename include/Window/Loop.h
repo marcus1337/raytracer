@@ -20,7 +20,6 @@ namespace rt
             {
                 eventHandler.processEvents();
                 frame.render(window.renderer, window.getSize());
-                spdlog::log(spdlog::level::info, "WINDOW: {} {}", window.getWidth(), window.getHeight());
                 sleep(1);
             }
         }

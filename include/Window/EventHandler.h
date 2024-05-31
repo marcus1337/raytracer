@@ -19,6 +19,10 @@ namespace rt
                 {
                     quit = true;
                 }
+                if (isWindowResizeEvent(event))
+                {
+                    spdlog::log(spdlog::level::info, "Window size: {} {}", event.window.data1, event.window.data2);
+                }
             }
         }
 
@@ -29,6 +33,11 @@ namespace rt
 
     private:
         bool quit = false;
+
+        bool isWindowResizeEvent(const SDL_Event &event) const
+        {
+            return event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED;
+        }
 
         bool isQuitEvent(const SDL_Event &event) const
         {
