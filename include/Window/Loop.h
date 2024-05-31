@@ -5,19 +5,25 @@
 #include "Render/Commands/Clear.h"
 #include "Render/Commands/Border.h"
 #include "Window/TargetTexture.h"
+#include "EventHandler.h"
 
 namespace rt
 {
     class Loop
     {
     public:
+        Loop()
+        {
+        }
+
         void run()
         {
-            rt::Window window;
+            Window window;
             window.renderer.addCommands(getRenderCommands());
             auto targetTexture = window.renderer.makeTargetTexture(rt::Size{500, 300});
-            while (handleEvents())
+            while (!eventHandler.hasQuit())
             {
+                eventHandler.processEvents();
                 spdlog::log(spdlog::level::info, "WINDOW: {} {}", window.getWidth(), window.getHeight());
                 window.renderer.render(targetTexture, window.getSize());
                 sleep(1);
@@ -25,6 +31,8 @@ namespace rt
         }
 
     private:
+        EventHandler eventHandler;
+
         bool handleEvents()
         {
             SDL_Event event;
