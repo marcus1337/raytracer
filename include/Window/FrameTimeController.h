@@ -6,7 +6,7 @@ namespace rt
     class FrameTimeController
     {
     public:
-        FrameTimeController(int targetFPS) : targetFPS(targetFPS)
+        explicit FrameTimeController(int targetFPS)
         {
             frameDuration = std::chrono::duration<double>(1.0 / targetFPS);
         }
@@ -19,15 +19,15 @@ namespace rt
         void afterFrame()
         {
             frameEndTime = std::chrono::high_resolution_clock::now();
-            delay();
         }
 
-    private:
-        int targetFPS;
-        std::chrono::duration<double> frameDuration;
-        std::chrono::_V2::system_clock::time_point frameStartTime, frameEndTime;
+        bool shouldUpdate() const
+        {
+            auto now = std::chrono::high_resolution_clock::now();
+            return now - frameEndTime >= frameDuration;
+        }
 
-        void delay()
+        void delay() const
         {
             std::chrono::duration<double> elapsedTime = frameEndTime - frameStartTime;
             if (elapsedTime < frameDuration)
@@ -35,5 +35,9 @@ namespace rt
                 std::this_thread::sleep_for(frameDuration - elapsedTime);
             }
         }
+
+    private:
+        std::chrono::duration<double> frameDuration;
+        std::chrono::_V2::system_clock::time_point frameStartTime, frameEndTime;
     };
 }

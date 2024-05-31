@@ -11,7 +11,7 @@ namespace rt
     class Loop
     {
     public:
-        Loop() : frame(window), frameTimeController(25)
+        Loop() : frame(window), renderTimeController(25), eventTimeController(60)
         {
         }
 
@@ -19,9 +19,7 @@ namespace rt
         {
             while (!eventHandler.hasQuit())
             {
-                frameTimeController.beforeFrame();
                 loopStep();
-                frameTimeController.afterFrame();
             }
         }
 
@@ -29,12 +27,34 @@ namespace rt
         rt::Window window;
         EventHandler eventHandler;
         Frame frame;
-        FrameTimeController frameTimeController;
+        FrameTimeController renderTimeController;
+        FrameTimeController eventTimeController;
+
+        void handleEvents()
+        {
+            if (eventTimeController.shouldUpdate())
+            {
+                eventTimeController.beforeFrame();
+                eventHandler.processEvents();
+                eventTimeController.afterFrame();
+            }
+        }
+
+        void render()
+        {
+            if (renderTimeController.shouldUpdate())
+            {
+                renderTimeController.beforeFrame();
+                frame.render(window.renderer, window.getSize());
+                renderTimeController.afterFrame();
+                renderTimeController.delay();
+            }
+        }
 
         void loopStep()
         {
-            eventHandler.processEvents();
-            frame.render(window.renderer, window.getSize());
+            handleEvents();
+            render();
         }
     };
 }
