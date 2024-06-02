@@ -25,10 +25,12 @@ namespace rt
         const glm::vec3 viewportU;
         const glm::vec3 viewportV;
 
-        glm::vec3 getRayOrigin(float u, float v) const
+        glm::vec3 getViewportPosition(float u, float v) const
         {
-            glm::vec3 viewPortUpperLeft = transform.pos - viewportU * 0.5f - viewportV * 0.5f;
-            glm::vec3 origin = viewPortUpperLeft + u * viewportU + v * viewportV;
+            glm::vec3 rotatedViewportU = transform.rot * viewportU;
+            glm::vec3 rotatedViewportV = transform.rot * viewportV;
+            glm::vec3 viewPortUpperLeft = transform.pos - rotatedViewportU * 0.5f - rotatedViewportV * 0.5f;
+            glm::vec3 origin = viewPortUpperLeft + u * rotatedViewportU + v * rotatedViewportV;
             return origin;
         }
 
@@ -43,8 +45,8 @@ namespace rt
         }
         virtual Ray spawnRay(float u, float v) const override
         {
-            glm::vec3 direction = transform.rot * glm::vec3(0.0f, 0.0f, -1.0f); // Assuming camera looks along -Z axis
-            return Ray(getRayOrigin(u, v), direction);
+            const glm::vec3 direction = transform.rot * glm::vec3(0.0f, 0.0f, -1.0f); // Assuming camera looks along -Z axis
+            return Ray(getViewportPosition(u, v), direction);
         }
 
     private:
