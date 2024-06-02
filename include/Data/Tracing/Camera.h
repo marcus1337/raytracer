@@ -45,8 +45,7 @@ namespace rt
         }
         virtual Ray spawnRay(float u, float v) const override
         {
-            const glm::vec3 direction = transform.rot * glm::vec3(0.0f, 0.0f, -1.0f); // Assuming camera looks along -Z axis
-            return Ray(getViewportPosition(u, v), direction);
+            return Ray(getViewportPosition(u, v), transform.getLookAt());
         }
 
     private:
@@ -62,11 +61,22 @@ namespace rt
 
         virtual Ray spawnRay(float u, float v) const override
         {
-            return Ray(); // TODO
+            return Ray(transform.pos, getRayDirection(u, v));
         }
 
     private:
         float hFOV; // Degrees
         float focalLength;
+
+        glm::vec3 getViewportOffset() const
+        {
+            return transform.pos + transform.getLookAt() * focalLength;
+        }
+
+        glm::vec3 getRayDirection(float u, float v) const
+        {
+            const glm::vec3 viewportOffsetPos = getViewportOffset() + getViewportPosition(u, v);
+            return glm::normalize(viewportOffsetPos - transform.pos);
+        }
     };
 }
