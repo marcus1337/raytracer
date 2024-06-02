@@ -10,7 +10,7 @@ namespace rt
     {
     public:
         Transform transform;
-        Camera(const rt::Size &viewSize) : viewSize(viewSize), viewportWidth((float)viewSize.width / (float)viewSize.height),
+        Camera(const rt::Size &viewSize) : viewSize(viewSize), viewportWidth(viewportHeight * getAspectRatio()),
                                            viewportU(viewportWidth, 0, 0), viewportV(0, -viewportHeight, 0)
         {
         }
@@ -23,6 +23,10 @@ namespace rt
 
     private:
         const rt::Size viewSize;
+        float getAspectRatio() const
+        {
+            return (float)viewSize.width / (float)viewSize.height;
+        }
 
     protected:
         const float viewportHeight = 2.0f;
