@@ -10,7 +10,8 @@ namespace rt
     {
     public:
         Transform transform;
-        Camera(const rt::Size &viewSize) : viewSize(viewSize), viewportU(viewSize.width, 0, 0), viewportV(0, -viewSize.height, 0)
+        Camera(const rt::Size &viewSize) : viewSize(viewSize), viewportWidth((float)viewSize.width / (float)viewSize.height),
+                                           viewportU(viewportWidth, 0, 0), viewportV(0, -viewportHeight, 0)
         {
         }
         virtual ~Camera() = default;
@@ -20,8 +21,12 @@ namespace rt
             return viewSize;
         }
 
-    protected:
+    private:
         const rt::Size viewSize;
+
+    protected:
+        const float viewportHeight = 2.0f;
+        const float viewportWidth;
         const glm::vec3 viewportU;
         const glm::vec3 viewportV;
 
@@ -56,7 +61,7 @@ namespace rt
     public:
         PerspectiveCamera(const rt::Size &viewSize, float hFOV = 45.0f) : Camera(viewSize), hFOV(hFOV)
         {
-            focalLength = static_cast<float>(viewSize.width) / (2.0f * tan(glm::radians(hFOV) / 2.0f));
+            focalLength = static_cast<float>(viewportWidth) / (2.0f * tan(glm::radians(hFOV) / 2.0f));
         }
 
         virtual Ray spawnRay(float u, float v) const override
