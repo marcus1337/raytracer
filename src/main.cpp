@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Window/SDLUtil.h"
 #include "Window/Loop.h"
+#include "Data/Tracing/Ray.h"
+#include "Tracer/RaySpawn.h"
 
 int main(int argc, char **argv)
 {
