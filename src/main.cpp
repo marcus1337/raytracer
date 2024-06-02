@@ -3,6 +3,7 @@
 #include "Window/Loop.h"
 #include "Data/Tracing/Ray.h"
 #include "Tracer/RaySpawner.h"
+#include "Tracer/CanvasMaker.h"
 
 int main(int argc, char **argv)
 {

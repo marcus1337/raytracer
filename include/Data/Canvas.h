@@ -8,6 +8,7 @@ namespace rt
     class Canvas
     {
     public:
+        Canvas() = default;
         Canvas(std::size_t width, std::size_t height) : width(width), height(height)
         {
             data.resize(width * height);
@@ -48,6 +49,10 @@ namespace rt
         void set(std::size_t x, std::size_t y, Color value)
         {
             data[getIndex(x, y)] = value;
+        }
+        void set(const Point &p, Color value)
+        {
+            set(p.x, p.y, value);
         }
 
         std::vector<Point> getIndices() const
