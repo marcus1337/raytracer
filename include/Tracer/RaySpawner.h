@@ -11,16 +11,17 @@ namespace rt
     class RaySpawner
     {
     public:
-        std::vector<Ray> spawnRays(const Camera &camera, const Size &canvasSize) const
+        std::vector<std::pair<Point, Ray>> getPixelRays(const Camera &camera) const
         {
-            assert(canvasSize.width > 1);
-            assert(canvasSize.height > 1);
-            std::vector<Ray> rays;
-            for (const auto &uv : getUVPoints(canvasSize))
+            const auto &viewSize = camera.getViewSize();
+            std::vector<std::pair<Point, Ray>> pixelRays;
+            for (const auto &p : getPixelIndices(viewSize))
             {
-                rays.push_back(camera.spawnRay(uv.x, uv.y));
+                const auto uv = getUVPoint(p, viewSize);
+                const auto ray = camera.spawnRay(uv.x, uv.y);
+                pixelRays.push_back({p, ray});
             }
-            return rays;
+            return pixelRays;
         }
 
     private:
@@ -35,14 +36,6 @@ namespace rt
                 }
             }
             return points;
-        }
-
-        std::vector<glm::vec2> getUVPoints(const Size &canvasSize) const
-        {
-            std::vector<glm::vec2> uvPoints;
-            for (const auto &p : getPixelIndices(canvasSize))
-                uvPoints.push_back(getUVPoint(p, canvasSize));
-            return uvPoints;
         }
 
         glm::vec2 getUVPoint(const Point &p, const Size &size) const
