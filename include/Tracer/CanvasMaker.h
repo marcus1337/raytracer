@@ -15,7 +15,7 @@ namespace rt
     public:
         CanvasMaker(const Size &canvasSize)
         {
-            camera = std::make_unique<PerspectiveCamera>(canvasSize, 45.0f);
+            camera = std::make_unique<PerspectiveCamera>(canvasSize, 90.0f);
         }
 
         Canvas makeCanvas() const

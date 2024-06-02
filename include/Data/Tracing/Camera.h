@@ -59,7 +59,7 @@ namespace rt
     class PerspectiveCamera : public Camera
     {
     public:
-        PerspectiveCamera(const rt::Size &viewSize, float hFOV = 45.0f) : Camera(viewSize), hFOV(hFOV)
+        PerspectiveCamera(const rt::Size &viewSize, float hFOV) : Camera(viewSize), hFOV(hFOV)
         {
             focalLength = static_cast<float>(viewportWidth) / (2.0f * tan(glm::radians(hFOV) / 2.0f));
         }
