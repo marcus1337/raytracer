@@ -35,24 +35,6 @@ namespace rt
         std::unique_ptr<Camera> camera;
         World world;
 
-        float hitSphere(const glm::vec3 center, float radius, const Ray &r) const
-        {
-            glm::vec3 oc = center - r.origin();
-            auto a = glm::length2(r.direction());
-            auto h = glm::dot(r.direction(), oc);
-            auto c = glm::length2(oc) - radius * radius;
-            auto discriminant = h * h - a * c;
-
-            if (discriminant < 0)
-            {
-                return -1.0f;
-            }
-            else
-            {
-                return (h - glm::sqrt(discriminant)) / a;
-            }
-        }
-
         Color backgroundColor(const Ray &r) const
         {
             auto rec = world.hit(r, Interval(0, std::numeric_limits<float>::max()));
