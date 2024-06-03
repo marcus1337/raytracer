@@ -26,9 +26,29 @@ namespace rt
     class Hittable
     {
     public:
-        virtual std::optional<HitRecord> hit(const Ray &r, const Interval &rT) const = 0;
+        std::optional<HitRecord> hit(const Ray &r, const Interval &rT) const
+        {
+            const auto hitT = rT.getMinValidParameter(getIntersectionDistances(r));
+            if (!hitT.has_value())
+            {
+                return std::nullopt;
+            }
+            return getHitRecord(r, hitT.value());
+        }
+
         virtual ~Hittable() = default;
 
     private:
+        HitRecord getHitRecord(const Ray &r, float t) const // t is guaranteed to be intersection time
+        {
+            HitRecord rec;
+            rec.t = t;
+            rec.p = r.at(rec.t);
+            rec.setFaceNormal(r, getOutwardNormal(rec.p));
+            return rec;
+        }
+
+        virtual glm::vec3 getOutwardNormal(const glm::vec3 &sp) const = 0; // sp is guaranteed to be a surface point
+        virtual std::vector<float> getIntersectionDistances(const Ray &r) const = 0;
     };
 }
