@@ -31,20 +31,35 @@ namespace rt
     private:
         std::unique_ptr<Camera> camera;
 
-        bool hitSphere(const glm::vec3 center, float radius, const Ray &r) const
+        float hitSphere(const glm::vec3 center, float radius, const Ray &r) const
         {
             glm::vec3 oc = center - r.origin();
-            auto a = glm::dot(r.direction(), r.direction());
-            auto b = -2.0 * glm::dot(r.direction(), oc);
-            auto c = glm::dot(oc, oc) - radius * radius;
-            auto discriminant = b * b - 4 * a * c;
-            return (discriminant >= 0);
+            auto a = glm::length2(r.direction());
+            auto h = glm::dot(r.direction(), oc);
+            auto c = glm::length2(oc) - radius * radius;
+            auto discriminant = h * h - a * c;
+
+            if (discriminant < 0)
+            {
+                return -1.0f;
+            }
+            else
+            {
+                return (h - glm::sqrt(discriminant)) / a;
+            }
         }
 
         Color backgroundColor(const Ray &ray) const
         {
-            if (hitSphere(glm::vec3(0, 0, -1.5f), 0.5f, ray))
-                return Color(glm::vec3(1.0f, 0, 0));
+            auto spherePos = glm::vec3(0, 0, -1.5f);
+            float radius = 0.5f;
+            auto t = hitSphere(spherePos, radius, ray);
+            if (t > 0.0)
+            {
+                glm::vec3 N = glm::normalize(ray.at(t) - spherePos);
+                auto colorScalar = radius * (N + glm::vec3(1.0f));
+                return Color(colorScalar);
+            }
 
             const auto rayDir = glm::normalize(ray.direction());
             glm::vec3 c1(1.0f, 1.0f, 1.0f);

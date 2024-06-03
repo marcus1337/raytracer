@@ -37,9 +37,11 @@
 #include "spdlog/spdlog.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/norm.hpp> 
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
