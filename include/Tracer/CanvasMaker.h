@@ -25,25 +25,28 @@ namespace rt
         Canvas makeCanvas() const
         {
             Canvas canvas(camera->getViewSize());
-            for (const auto &pixelRay : RaySpawner().getPixelRays(*camera.get()))
+            for (const auto &pixelRay : raySpawner.getPixelRays(*camera.get()))
             {
-                canvas.set(pixelRay.first, getRayColor(pixelRay.second));
+                auto color = Color(getRayColorScalar(pixelRay.second));
+                canvas.set(pixelRay.first, color);
             }
             return canvas;
         }
 
     private:
+        RaySpawner raySpawner;
         std::unique_ptr<Camera> camera;
         World world;
+        Background background;
 
-        Color getRayColor(const Ray &r) const
+        glm::vec3 getRayColorScalar(const Ray &r) const
         {
             auto rec = world.hit(r, getStartInterval());
             if (rec.has_value())
             {
-                return Color(getNormalColorScalar(rec.value().normal));
+                return getNormalColorScalar(rec.value().normal);
             }
-            return Background().getColor(r);
+            return background.getColorScalar(r);
         }
 
         glm::vec3 getNormalColorScalar(const glm::vec3 &normal) const
