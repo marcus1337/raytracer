@@ -9,6 +9,7 @@
 #include "Data/Canvas.h"
 #include "Tracer/World.h"
 #include "Tracer/Background.h"
+#include "Data/CanvasScalar.h"
 
 namespace rt
 {
@@ -31,6 +32,17 @@ namespace rt
                 canvas.set(pixelRay.first, color);
             }
             return canvas;
+        }
+
+        Canvas makeCanvasAntialiased() const
+        {
+            CanvasScalar canvasScalar(camera->getViewSize());
+            for (const auto &pixelRay : raySpawner.getPixelSampleRays(*camera.get()))
+            {
+                auto colorScalar = getRayColorScalar(pixelRay.second);
+                canvasScalar.add(pixelRay.first, colorScalar);
+            }
+            return canvasScalar.getCanvas();
         }
 
     private:
