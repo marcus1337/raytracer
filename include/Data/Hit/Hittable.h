@@ -26,17 +26,27 @@ namespace rt
     class Hittable
     {
     public:
-        std::optional<HitRecord> hit(const Ray &r, const Interval &rT) const
+        virtual std::optional<HitRecord> hit(const Ray &r, const Interval &rT) const = 0;
+        virtual ~Hittable() = default;
+    };
+
+    class HittableObject : public Hittable
+    {
+    public:
+        virtual std::optional<HitRecord> hit(const Ray &r, const Interval &rT) const override
         {
             const auto hitT = rT.getMinValidParameter(getIntersectionDistances(r));
-            if (!hitT.has_value())
+            if (hitT.has_value())
+            {
+                return getHitRecord(r, hitT.value());
+            }
+            else
             {
                 return std::nullopt;
             }
-            return getHitRecord(r, hitT.value());
         }
 
-        virtual ~Hittable() = default;
+        virtual ~HittableObject() = default;
 
     private:
         HitRecord getHitRecord(const Ray &r, float t) const // t is guaranteed to be intersection time

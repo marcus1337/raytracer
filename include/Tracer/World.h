@@ -5,7 +5,7 @@
 
 namespace rt
 {
-    class World
+    class World : public Hittable
     {
     public:
         World()
@@ -22,7 +22,7 @@ namespace rt
             hittables.clear();
         }
 
-        std::optional<HitRecord> hit(const Ray &r, const Interval &rT) const
+        virtual std::optional<HitRecord> hit(const Ray &r, const Interval &rT) const override
         {
             std::optional<HitRecord> rec;
             for (const auto &hittable : hittables)

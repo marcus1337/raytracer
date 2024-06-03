@@ -4,7 +4,7 @@
 
 namespace rt
 {
-    class Sphere : public Hittable
+    class Sphere : public HittableObject
     {
     public:
         Sphere(const glm::vec3 &center, float radius) : center(center), radius(radius)
