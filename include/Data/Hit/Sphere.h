@@ -18,18 +18,26 @@ namespace rt
             {
                 return std::nullopt;
             }
-
-            HitRecord rec;
-            rec.t = hitT.value();
-            rec.p = r.at(rec.t);
-            glm::vec3 outwardNormal = (rec.p - center) / radius;
-            rec.setFaceNormal(r, outwardNormal);
-            return rec;
+            return getHitRecord(r, hitT.value());
         }
 
     private:
         glm::vec3 center;
         float radius;
+
+        HitRecord getHitRecord(const Ray &r, float t) const // t is guaranteed to be intersection time
+        {
+            HitRecord rec;
+            rec.t = t;
+            rec.p = r.at(rec.t);
+            rec.setFaceNormal(r, getOutwardNormal(rec.p));
+            return rec;
+        }
+
+        glm::vec3 getOutwardNormal(const glm::vec3 &sp) const // sp is guaranteed to be a surface point
+        {
+            return (sp - center) / radius;
+        }
 
         std::vector<float> getIntersectionDistances(const Ray &r) const
         {
