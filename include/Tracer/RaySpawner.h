@@ -57,7 +57,7 @@ namespace rt
 
     private:
         mutable Rand rand;
-        int samplesPerPixel = 10;
+        int samplesPerPixel = 100;
 
         std::vector<Point> getPixelIndices(const Size &size) const
         {
@@ -72,15 +72,21 @@ namespace rt
             return points;
         }
 
-        glm::vec2 getUVOffsetPointSample() const
+        float getDelta(int numElements) const
         {
-            float maxValue = 0.005f;
-            return glm::vec2(rand.getFloat(0, maxValue) - maxValue, rand.getFloat(0, maxValue) - maxValue);
+            return 1.0f / numElements;
+        }
+
+        glm::vec2 getUVOffsetPointSample(const Size &size) const
+        {
+            float uDelta = getDelta(size.width);
+            float vDelta = getDelta(size.height);
+            return glm::vec2(rand.getFloat(0, uDelta) - uDelta, rand.getFloat(0, vDelta) - vDelta);
         }
 
         glm::vec2 getUVPointSample(const Point &p, const Size &size) const
         {
-            return getUVPoint(p, size) + getUVOffsetPointSample();
+            return getUVPoint(p, size) + getUVOffsetPointSample(size);
         }
 
         glm::vec2 getUVPoint(const Point &p, const Size &size) const
