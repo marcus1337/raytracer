@@ -14,6 +14,20 @@ namespace rt
         {
         }
 
+        std::optional<float> getMinValidParameter(const std::vector<float> &parameters) const
+        {
+            // Assumes parameters are stored in ASCENDING order.
+            for (const auto &param : parameters)
+            {
+                if (contains(param))
+                {
+                    return param;
+                }
+            }
+
+            return std::nullopt;
+        }
+
         bool isEmpty() const
         {
             return max < min;
