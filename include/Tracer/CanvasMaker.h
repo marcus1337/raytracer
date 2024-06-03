@@ -8,6 +8,7 @@
 #include "Tracer/RaySpawner.h"
 #include "Data/Canvas.h"
 #include "Tracer/World.h"
+#include "Tracer/Background.h"
 
 namespace rt
 {
@@ -26,7 +27,7 @@ namespace rt
             Canvas canvas(camera->getViewSize());
             for (const auto &pixelRay : RaySpawner().getPixelRays(*camera.get()))
             {
-                canvas.set(pixelRay.first, backgroundColor(pixelRay.second));
+                canvas.set(pixelRay.first, getRayColor(pixelRay.second));
             }
             return canvas;
         }
@@ -35,21 +36,24 @@ namespace rt
         std::unique_ptr<Camera> camera;
         World world;
 
-        Color backgroundColor(const Ray &r) const
+        Color getRayColor(const Ray &r) const
         {
-            auto rec = world.hit(r, Interval(0, std::numeric_limits<float>::max()));
+            auto rec = world.hit(r, getStartInterval());
             if (rec.has_value())
             {
-                auto tmp = 0.5f * (rec.value().normal + glm::vec3(1.0f));
-                return Color(tmp);
+                return Color(getNormalColorScalar(rec.value().normal));
             }
+            return Background().getColor(r);
+        }
 
-            const auto rayDir = glm::normalize(r.direction());
-            glm::vec3 c1(1.0f, 1.0f, 1.0f);
-            glm::vec3 c2(0.5f, 0.7f, 1.0f);
-            auto a = 0.5f * (rayDir.y + 1.0f);
-            glm::vec3 colorScalar = (1.0f - a) * c1 + a * c2;
-            return Color(colorScalar);
+        glm::vec3 getNormalColorScalar(const glm::vec3 &normal) const
+        {
+            return 0.5f * (normal + glm::vec3(1.0f));
+        }
+
+        Interval getStartInterval() const
+        {
+            return Interval(0, std::numeric_limits<float>::max());
         }
     };
 }
