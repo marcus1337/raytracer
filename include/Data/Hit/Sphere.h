@@ -22,7 +22,6 @@ namespace rt
             if (discriminant < 0)
             {
                 return std::nullopt;
-                ;
             }
 
             auto sqrtd = glm::sqrt(discriminant);

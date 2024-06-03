@@ -27,6 +27,7 @@ namespace rt
     {
     public:
         virtual std::optional<HitRecord> hit(const Ray &r, const Interval &rT) const = 0;
+        virtual ~Hittable() = default;
 
     private:
     };

@@ -7,6 +7,7 @@
 #include "Data/Tracing/Camera.h"
 #include "Tracer/RaySpawner.h"
 #include "Data/Canvas.h"
+#include "Tracer/World.h"
 
 namespace rt
 {
@@ -16,6 +17,8 @@ namespace rt
         CanvasMaker(const Size &canvasSize)
         {
             camera = std::make_unique<PerspectiveCamera>(canvasSize, 90.0f);
+            world.add(std::make_unique<Sphere>(glm::vec3(0, 0, -1.5f), 0.5f));
+            world.add(std::make_unique<Sphere>(glm::vec3(0, -100.5, -1.5f), 100.0f));
         }
 
         Canvas makeCanvas() const
@@ -30,6 +33,7 @@ namespace rt
 
     private:
         std::unique_ptr<Camera> camera;
+        World world;
 
         float hitSphere(const glm::vec3 center, float radius, const Ray &r) const
         {
@@ -49,19 +53,16 @@ namespace rt
             }
         }
 
-        Color backgroundColor(const Ray &ray) const
+        Color backgroundColor(const Ray &r) const
         {
-            auto spherePos = glm::vec3(0, 0, -1.5f);
-            float radius = 0.5f;
-            auto t = hitSphere(spherePos, radius, ray);
-            if (t > 0.0)
+            auto rec = world.hit(r, Interval(0, std::numeric_limits<float>::max()));
+            if (rec.has_value())
             {
-                glm::vec3 N = glm::normalize(ray.at(t) - spherePos);
-                auto colorScalar = radius * (N + glm::vec3(1.0f));
-                return Color(colorScalar);
+                auto tmp = 0.5f * (rec.value().normal + glm::vec3(1.0f));
+                return Color(tmp);
             }
 
-            const auto rayDir = glm::normalize(ray.direction());
+            const auto rayDir = glm::normalize(r.direction());
             glm::vec3 c1(1.0f, 1.0f, 1.0f);
             glm::vec3 c2(0.5f, 0.7f, 1.0f);
             auto a = 0.5f * (rayDir.y + 1.0f);
