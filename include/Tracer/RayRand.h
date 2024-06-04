@@ -19,7 +19,7 @@ namespace rt
         glm::vec3 randInUnitSphere()
         {
             auto p = randVec(-1.f, 1.f);
-            while (glm::length2(p) > 1)
+            while (glm::length2(p) >= 1.f)
                 p = randVec(-1.f, 1.f);
             return p;
         }
