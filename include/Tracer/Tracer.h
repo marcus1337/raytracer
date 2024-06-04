@@ -39,9 +39,6 @@ namespace rt
                 {
                     return glm::vec3(0, 0, 0);
                 }
-
-                // auto dir = glm::normalize(loc.normal + rayRand.randUnitVec());
-                // return 0.5f * getRayColorScalar(Ray(loc.p, dir), world, depth - 1);
             }
 
             return background.getColorScalar(r);
