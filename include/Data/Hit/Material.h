@@ -63,7 +63,7 @@ namespace rt
     class Metal : public Material
     {
     public:
-        Metal(const glm::vec3 &albedo) : albedo(albedo)
+        Metal(const glm::vec3 &albedo, float fuzz) : albedo(albedo), fuzz(fuzz)
         {
         }
 
@@ -71,12 +71,19 @@ namespace rt
         {
             Scatter scat;
             auto reflected = reflect(rIn.direction(), loc.normal);
+            reflected = glm::normalize(reflected) + (fuzz * rayRand.randUnitVec());
             scat.r = Ray(loc.p, reflected);
             scat.attenuation = albedo;
+            if (glm::dot(scat.r.direction(), loc.normal) <= 0)
+            {
+                return std::nullopt;
+            }
+
             return scat;
         }
 
     private:
         glm::vec3 albedo; // Color
+        float fuzz;
     };
 }
