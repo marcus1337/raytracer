@@ -47,9 +47,14 @@ namespace rt
             std::vector<Ray> rays;
             for (int i = 0; i < samplesPerPixel; i++)
             {
-                rays.push_back(camera.spawnRay(getUVPointSample(p, camera.getViewSize())));
+                rays.push_back(getSampleRay(p, camera));
             }
             return rays;
+        }
+
+        Ray getSampleRay(const Point &p, const Camera &camera) const
+        {
+            return camera.spawnRay(getUVPointSample(p, camera.getViewSize()));
         }
 
         void setSamplesPerPixel(int value)
