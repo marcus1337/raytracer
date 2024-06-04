@@ -31,18 +31,25 @@ namespace rt
 
         std::vector<std::pair<Point, Ray>> getPixelSampleRays(const Camera &camera) const
         {
-            const auto &viewSize = camera.getViewSize();
             std::vector<std::pair<Point, Ray>> pixelRays;
-            for (const auto &p : getPixelIndices(viewSize))
+            for (const auto &p : getPixelIndices(camera.getViewSize()))
             {
-                for (int i = 0; i < samplesPerPixel; i++)
+                for (const auto &ray : getSampleRays(p, camera))
                 {
-                    const auto uv = getUVPointSample(p, viewSize);
-                    const auto ray = camera.spawnRay(uv.x, uv.y);
                     pixelRays.push_back({p, ray});
                 }
             }
             return pixelRays;
+        }
+
+        std::vector<Ray> getSampleRays(const Point &p, const Camera &camera) const
+        {
+            std::vector<Ray> rays;
+            for (int i = 0; i < samplesPerPixel; i++)
+            {
+                rays.push_back(camera.spawnRay(getUVPointSample(p, camera.getViewSize())));
+            }
+            return rays;
         }
 
         void setSamplesPerPixel(int value)

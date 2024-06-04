@@ -15,6 +15,10 @@ namespace rt
         {
         }
         virtual ~Camera() = default;
+        Ray spawnRay(const glm::vec2 &uv) const
+        {
+            return spawnRay(uv.x, uv.y);
+        }
         virtual Ray spawnRay(float u, float v) const = 0;
         const Size &getViewSize() const
         {
