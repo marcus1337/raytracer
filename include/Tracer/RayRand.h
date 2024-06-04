@@ -4,10 +4,10 @@
 
 namespace rt
 {
-    class RandRand
+    class RayRand
     {
     public:
-        RandRand()
+        RayRand()
         {
         }
 
