@@ -33,7 +33,7 @@ namespace rt
                 auto dir = glm::normalize(recVal.normal + rayRand.randUnitVec());
                 return 0.5f * getRayColorScalar(Ray(recVal.p, dir), world, depth - 1);
             }
-            
+
             return background.getColorScalar(r);
         }
 
