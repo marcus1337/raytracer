@@ -19,8 +19,8 @@ namespace rt
         World makeSimpleWorld() const
         {
             World world;
-            world.add(std::make_unique<Sphere>(glm::vec3(0, 0, -1.5f), 0.5f));
-            world.add(std::make_unique<Sphere>(glm::vec3(0, -100.5, -1.5f), 100.0f));
+            world.add(std::make_unique<Sphere>(glm::vec3(0, 0, -1.5f), 0.5f, nullptr));
+            world.add(std::make_unique<Sphere>(glm::vec3(0, -100.5, -1.5f), 100.0f, nullptr));
             return world;
         }
     };

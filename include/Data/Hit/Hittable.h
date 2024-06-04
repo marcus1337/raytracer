@@ -17,6 +17,11 @@ namespace rt
     class HittableObject : public Hittable
     {
     public:
+        HittableObject(std::shared_ptr<Material> mat) : mat(mat)
+        {
+            assert(mat != nullptr);
+        }
+
         virtual std::optional<HitRecord> hit(const Ray &r, const Interval &rT) const override
         {
             const auto hitT = rT.getMinValidParameter(getIntersectionDistances(r));
@@ -33,6 +38,8 @@ namespace rt
         virtual ~HittableObject() = default;
 
     private:
+        std::shared_ptr<Material> mat;
+
         HitRecord getHitRecord(const Ray &r, float t) const // t is guaranteed to be intersection time
         {
             HitRecord rec;
@@ -40,6 +47,7 @@ namespace rt
             rec.t = t;
             loc.p = r.at(rec.t);
             loc.setFaceNormal(r, getOutwardNormal(loc.p));
+            rec.mat = mat;
             return rec;
         }
 

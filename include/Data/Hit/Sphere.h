@@ -7,7 +7,7 @@ namespace rt
     class Sphere : public HittableObject
     {
     public:
-        Sphere(const glm::vec3 &center, float radius) : center(center), radius(radius)
+        Sphere(const glm::vec3 &center, float radius, std::shared_ptr<Material> mat) : HittableObject(mat), center(center), radius(radius)
         {
         }
 
