@@ -30,13 +30,28 @@ namespace rt
 
         Canvas makeCanvasAntialiased(const World &world) const
         {
-            return makeCanvas(world, raySpawner.getPixelSampleRays(*camera));
+            return makeSampledCanvasParallel(world);
         }
 
     private:
         std::unique_ptr<Camera> camera;
         RaySpawner raySpawner;
         Tracer tracer;
+
+        Canvas makeSampledCanvasParallel(const World &world) const
+        {
+            CanvasScalar canvasScalar(camera->getViewSize());
+            const auto indices = canvasScalar.getIndices();
+            std::for_each(std::execution::par, indices.begin(), indices.end(),
+                          [&](const Point &p)
+                          {
+                              for (const auto &ray : raySpawner.getSampleRays(p, *camera))
+                              {
+                                  canvasScalar.add(p, tracer.getRayColorScalar(ray, world));
+                              }
+                          });
+            return canvasScalar.getCanvas();
+        }
 
         Canvas makeCanvas(const World &world, const std::vector<std::pair<Point, Ray>> &pixelRayPairs) const
         {

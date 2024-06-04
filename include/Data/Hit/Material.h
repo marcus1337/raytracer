@@ -20,7 +20,7 @@ namespace rt
         virtual std::optional<Scatter> scatter(const Ray &rIn, const HitLocation &loc) const = 0;
 
     protected:
-        mutable RayRand rayRand;
+        static thread_local RayRand rayRand;
 
         bool nearZero(const glm::vec3 &v) const
         {

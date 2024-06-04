@@ -68,8 +68,8 @@ namespace rt
         }
 
     private:
-        mutable Rand rand;
-        int samplesPerPixel = 10;
+        static thread_local Rand rand;
+        int samplesPerPixel = 50;
 
         std::vector<Point> getPixelIndices(const Size &size) const
         {
