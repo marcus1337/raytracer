@@ -11,6 +11,7 @@
 #include "Tracer/Background.h"
 #include "Data/CanvasScalar.h"
 #include "Tracer/Tracer.h"
+#include "Tracer/WorldMaker.h"
 
 namespace rt
 {
@@ -20,8 +21,7 @@ namespace rt
         CanvasMaker(const Size &canvasSize)
         {
             camera = std::make_unique<PerspectiveCamera>(canvasSize, 90.0f);
-            world.add(std::make_unique<Sphere>(glm::vec3(0, 0, -1.5f), 0.5f));
-            world.add(std::make_unique<Sphere>(glm::vec3(0, -100.5, -1.5f), 100.0f));
+            world = WorldMaker().makeSimpleWorld();
         }
 
         Canvas makeCanvas() const
