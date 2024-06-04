@@ -2,13 +2,14 @@
 #include "pch.h"
 #include "Data/Tracing/Ray.h"
 #include "Data/Color.h"
+#include "RayRand.h"
 
 namespace rt
 {
     class Tracer
     {
     public:
-        glm::vec3 getRayColorScalar(const Ray &r, const World& world) const
+        glm::vec3 getRayColorScalar(const Ray &r, const World &world) const
         {
             auto rec = world.hit(r, getStartInterval());
             if (rec.has_value())
