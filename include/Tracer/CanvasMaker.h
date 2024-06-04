@@ -21,35 +21,32 @@ namespace rt
         CanvasMaker(const Size &canvasSize)
         {
             camera = std::make_unique<PerspectiveCamera>(canvasSize, 90.0f);
-            world = WorldMaker().makeSimpleWorld();
         }
 
-        Canvas makeCanvas() const
+        Canvas makeCanvas(const World &world) const
         {
-            Canvas canvas(camera->getViewSize());
-            for (const auto &pair : raySpawner.getPixelRays(*camera))
-            {
-                auto color = Color(tracer.getRayColorScalar(pair.second, world));
-                canvas.set(pair.first, color);
-            }
-            return canvas;
+            return makeCanvas(world, raySpawner.getPixelRays(*camera));
         }
 
-        Canvas makeCanvasAntialiased() const
+        Canvas makeCanvasAntialiased(const World &world) const
+        {
+            return makeCanvas(world, raySpawner.getPixelSampleRays(*camera));
+        }
+
+    private:
+        std::unique_ptr<Camera> camera;
+        RaySpawner raySpawner;
+        Tracer tracer;
+
+        Canvas makeCanvas(const World &world, const std::vector<std::pair<Point, Ray>> &pixelRayPairs) const
         {
             CanvasScalar canvasScalar(camera->getViewSize());
-            for (const auto &pair : raySpawner.getPixelSampleRays(*camera))
+            for (const auto &pair : pixelRayPairs)
             {
                 auto colorScalar = tracer.getRayColorScalar(pair.second, world);
                 canvasScalar.add(pair.first, colorScalar);
             }
             return canvasScalar.getCanvas();
         }
-
-    private:
-        RaySpawner raySpawner;
-        std::unique_ptr<Camera> camera;
-        World world;
-        Tracer tracer;
     };
 }
