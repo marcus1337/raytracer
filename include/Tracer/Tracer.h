@@ -29,9 +29,19 @@ namespace rt
             auto rec = world.hit(r, getStartInterval());
             if (rec.has_value())
             {
-                const auto recVal = rec.value();
-                auto dir = glm::normalize(recVal.loc.normal + rayRand.randUnitVec());
-                return 0.5f * getRayColorScalar(Ray(recVal.loc.p, dir), world, depth - 1);
+                const auto &loc = rec->loc;
+                auto scat = rec->mat->scatter(r, rec->loc);
+                if (scat.has_value())
+                {
+                    return scat->attenuation * getRayColorScalar(scat->r, world, depth - 1);
+                }
+                else
+                {
+                    return glm::vec3(0, 0, 0);
+                }
+
+                // auto dir = glm::normalize(loc.normal + rayRand.randUnitVec());
+                // return 0.5f * getRayColorScalar(Ray(loc.p, dir), world, depth - 1);
             }
 
             return background.getColorScalar(r);
