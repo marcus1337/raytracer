@@ -28,6 +28,11 @@ namespace rt
             return glm::all(glm::lessThan(glm::abs(v), glm::vec3(epsilon)));
         }
 
+        glm::vec3 reflect(const glm::vec3 &v, const glm::vec3 &n) const
+        {
+            return v - 2 * glm::dot(v, n) * n;
+        }
+
     private:
     };
 
@@ -47,6 +52,26 @@ namespace rt
                 scatDir = loc.normal;
             }
             scat.r = Ray(loc.p, scatDir);
+            scat.attenuation = albedo;
+            return scat;
+        }
+
+    private:
+        glm::vec3 albedo; // Color
+    };
+
+    class Metal : public Material
+    {
+    public:
+        Metal(const glm::vec3 &albedo) : albedo(albedo)
+        {
+        }
+
+        virtual std::optional<Scatter> scatter(const Ray &rIn, const HitLocation &loc) const override
+        {
+            Scatter scat;
+            auto reflected = reflect(rIn.direction(), loc.normal);
+            scat.r = Ray(loc.p, reflected);
             scat.attenuation = albedo;
             return scat;
         }
