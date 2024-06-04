@@ -2,26 +2,10 @@
 #include "pch.h"
 #include "Data/Tracing/Ray.h"
 #include "Data/Hit/Interval.h"
+#include "Data/Hit/HitRecord.h"
 
 namespace rt
 {
-
-    struct HitRecord
-    {
-        glm::vec3 p;
-        glm::vec3 normal;
-        float t;
-        bool frontFace;
-
-        void setFaceNormal(const Ray &r, const glm::vec3 &outwardNormal)
-        {
-            // Sets the hit record normal vector.
-            // NOTE: the parameter `outward_normal` is assumed to have unit length.
-
-            frontFace = glm::dot(r.direction(), outwardNormal) < 0;
-            normal = frontFace ? outwardNormal : -outwardNormal;
-        }
-    };
 
     class Hittable
     {
@@ -52,9 +36,10 @@ namespace rt
         HitRecord getHitRecord(const Ray &r, float t) const // t is guaranteed to be intersection time
         {
             HitRecord rec;
+            auto &loc = rec.loc;
             rec.t = t;
-            rec.p = r.at(rec.t);
-            rec.setFaceNormal(r, getOutwardNormal(rec.p));
+            loc.p = r.at(rec.t);
+            loc.setFaceNormal(r, getOutwardNormal(loc.p));
             return rec;
         }
 

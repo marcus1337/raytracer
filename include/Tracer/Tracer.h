@@ -30,8 +30,8 @@ namespace rt
             if (rec.has_value())
             {
                 const auto recVal = rec.value();
-                auto dir = glm::normalize(recVal.normal + rayRand.randUnitVec());
-                return 0.5f * getRayColorScalar(Ray(recVal.p, dir), world, depth - 1);
+                auto dir = glm::normalize(recVal.loc.normal + rayRand.randUnitVec());
+                return 0.5f * getRayColorScalar(Ray(recVal.loc.p, dir), world, depth - 1);
             }
 
             return background.getColorScalar(r);
