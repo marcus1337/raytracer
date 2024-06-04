@@ -10,6 +10,7 @@
 #include "Tracer/World.h"
 #include "Tracer/Background.h"
 #include "Data/CanvasScalar.h"
+#include "Tracer/Tracer.h"
 
 namespace rt
 {
@@ -26,10 +27,10 @@ namespace rt
         Canvas makeCanvas() const
         {
             Canvas canvas(camera->getViewSize());
-            for (const auto &pixelRay : raySpawner.getPixelRays(*camera.get()))
+            for (const auto &pair : raySpawner.getPixelRays(*camera))
             {
-                auto color = Color(getRayColorScalar(pixelRay.second));
-                canvas.set(pixelRay.first, color);
+                auto color = Color(tracer.getRayColorScalar(pair.second, world));
+                canvas.set(pair.first, color);
             }
             return canvas;
         }
@@ -37,10 +38,10 @@ namespace rt
         Canvas makeCanvasAntialiased() const
         {
             CanvasScalar canvasScalar(camera->getViewSize());
-            for (const auto &pixelRay : raySpawner.getPixelSampleRays(*camera.get()))
+            for (const auto &pair : raySpawner.getPixelSampleRays(*camera))
             {
-                auto colorScalar = getRayColorScalar(pixelRay.second);
-                canvasScalar.add(pixelRay.first, colorScalar);
+                auto colorScalar = tracer.getRayColorScalar(pair.second, world);
+                canvasScalar.add(pair.first, colorScalar);
             }
             return canvasScalar.getCanvas();
         }
@@ -49,26 +50,6 @@ namespace rt
         RaySpawner raySpawner;
         std::unique_ptr<Camera> camera;
         World world;
-        Background background;
-
-        glm::vec3 getRayColorScalar(const Ray &r) const
-        {
-            auto rec = world.hit(r, getStartInterval());
-            if (rec.has_value())
-            {
-                return getNormalColorScalar(rec.value().normal);
-            }
-            return background.getColorScalar(r);
-        }
-
-        glm::vec3 getNormalColorScalar(const glm::vec3 &normal) const
-        {
-            return 0.5f * (normal + glm::vec3(1.0f));
-        }
-
-        Interval getStartInterval() const
-        {
-            return Interval(0, std::numeric_limits<float>::max());
-        }
+        Tracer tracer;
     };
 }
