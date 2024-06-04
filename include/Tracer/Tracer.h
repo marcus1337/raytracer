@@ -17,7 +17,7 @@ namespace rt
     private:
         Background background;
         mutable RayRand rayRand;
-        int maxDepth = 20;
+        int maxDepth = 50;
 
         glm::vec3 getRayColorScalar(const Ray &r, const World &world, int depth) const
         {
@@ -31,7 +31,7 @@ namespace rt
             {
                 const auto recVal = rec.value();
                 auto dir = rayRand.randOnHemisphere(recVal.normal);
-                return 0.7f * getRayColorScalar(Ray(recVal.p, dir), world, depth - 1);
+                return 0.5f * getRayColorScalar(Ray(recVal.p, dir), world, depth - 1);
             }
             return background.getColorScalar(r);
         }
@@ -43,7 +43,7 @@ namespace rt
 
         Interval getStartInterval() const
         {
-            return Interval(0, std::numeric_limits<float>::max());
+            return Interval(0.001f, std::numeric_limits<float>::max());
         }
     };
 }
