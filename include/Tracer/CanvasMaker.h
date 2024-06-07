@@ -45,6 +45,17 @@ namespace rt
             canvasScalar.clear();
         }
 
+        Transform getCameraTransform() const
+        {
+            return camera->transform;
+        }
+
+        void setCameraTransform(const Transform &transform)
+        {
+            camera->transform = transform;
+            canvasScalar.clear();
+        }
+
     private:
         std::unique_ptr<Camera> camera;
         RaySpawner raySpawner;

@@ -13,6 +13,8 @@ namespace rt
     public:
         Loop() : frame(window), renderTimeController(25), eventTimeController(60)
         {
+            Transform t;
+            frame.setCameraTransform(t);
         }
 
         void run()

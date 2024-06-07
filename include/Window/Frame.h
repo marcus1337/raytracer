@@ -30,6 +30,16 @@ namespace rt
             renderer.render(targetTexture, windowSize);
         }
 
+        Transform getCameraTransform() const
+        {
+            return canvasMaker.getCameraTransform();
+        }
+
+        void setCameraTransform(const Transform &transform)
+        {
+            canvasMaker.setCameraTransform(transform);
+        }
+
     private:
         static constexpr int borderThickness = 10;
         TargetTexture targetTexture;
