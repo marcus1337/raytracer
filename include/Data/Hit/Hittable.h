@@ -17,9 +17,9 @@ namespace rt
     class HittableObject : public Hittable
     {
     public:
-        HittableObject(std::shared_ptr<Material> mat) : mat(mat)
+        HittableObject(const Material& mat) : mat(mat)
         {
-            assert(mat != nullptr);
+
         }
 
         virtual std::optional<HitRecord> hit(const Ray &r, const Interval &rT) const override
@@ -38,7 +38,7 @@ namespace rt
         virtual ~HittableObject() = default;
 
     private:
-        std::shared_ptr<Material> mat;
+        Material mat;
 
         HitRecord getHitRecord(const Ray &r, float t) const // t is guaranteed to be intersection time
         {

@@ -9,8 +9,12 @@ namespace rt
 {
     struct HitRecord
     {
+        HitRecord() : mat(Lambertian(glm::vec3(0.5f, 0.5f, 0.5f)))
+        {
+        }
+
         HitLocation loc;
         float t;
-        std::shared_ptr<Material> mat;
+        Material mat;
     };
 }

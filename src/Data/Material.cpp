@@ -2,6 +2,14 @@
 
 namespace rt
 {
+    std::optional<Scatter> scatter(const Lambertian &mat, const Ray &rIn, const HitLocation &loc)
+    {
+        return mat.scatter(rIn, loc);
+    }
+    std::optional<Scatter> scatter(const Metal &mat, const Ray &rIn, const HitLocation &loc)
+    {
+        return mat.scatter(rIn, loc);
+    }
 
     namespace MatUtil
     {
