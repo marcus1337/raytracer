@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "Data/Hit/Hittable.h"
 #include "Data/Hit/Sphere.h"
+#include "Data/Hit/HittableObject.h"
 
 namespace rt
 {
@@ -12,7 +13,7 @@ namespace rt
         {
         }
 
-        void add(std::unique_ptr<Hittable> hittable)
+        void add(std::unique_ptr<HittableObject> hittable)
         {
             hittables.push_back(std::move(hittable));
         }
@@ -38,6 +39,6 @@ namespace rt
         }
 
     private:
-        std::vector<std::unique_ptr<Hittable>> hittables;
+        std::vector<std::unique_ptr<HittableObject>> hittables;
     };
 }

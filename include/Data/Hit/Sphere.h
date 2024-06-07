@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "Hittable.h"
+#include "HittableObject.h"
 
 namespace rt
 {
