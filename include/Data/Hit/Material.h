@@ -51,16 +51,22 @@ namespace rt
         {
             virtual ~MatConcept() = default;
             virtual std::optional<Scatter> do_scatter(const Ray &rIn, const HitLocation &loc) const = 0;
-            virtual std::unique_ptr<MatConcept> clone() const = 0;
+            virtual void clone(MatConcept *memory) const = 0;
+            virtual void move(MatConcept *memory) const = 0;
         };
 
         template <typename MatT>
         struct MatModel : public MatConcept
         {
 
-            std::unique_ptr<MatConcept> clone() const override
+            void clone(MatConcept *memory) const override
             {
-                return std::make_unique<MatModel>(*this);
+                ::new (memory) MatModel(*this);
+            }
+
+            void move(MatConcept *memory) const override
+            {
+                ::new (memory) MatModel(std::move(*this));
             }
 
             MatModel(MatT mat) : mat_(std::move(mat))
@@ -77,29 +83,60 @@ namespace rt
 
         friend std::optional<Scatter> scatter(const Material &mat, const Ray &rIn, const HitLocation &loc)
         {
-            return mat.pimpl->do_scatter(rIn, loc);
+            return mat.pimpl()->do_scatter(rIn, loc);
         }
 
-        std::unique_ptr<MatConcept> pimpl;
+        MatConcept *pimpl() noexcept
+        {
+            return reinterpret_cast<MatConcept *>(buffer.data());
+        }
+        const MatConcept *pimpl() const noexcept
+        {
+            return reinterpret_cast<const MatConcept *>(buffer.data());
+        }
+
+        static constexpr std::size_t buffersize = 128UL;
+        static constexpr std::size_t alignment = 16UL;
+
+        alignas(alignment) std::array<std::byte, buffersize> buffer;
 
     public:
         template <typename MatT>
-        Material(MatT mat) : pimpl(std::make_unique<MatModel<MatT>>(std::move(mat)))
+        Material(MatT mat)
         {
+            using M = MatModel<MatT>;
+            static_assert(sizeof(M) <= buffersize, "Given type is too large");
+            static_assert(alignof(M) <= alignment, "Given type is overaligned");
+            ::new (pimpl()) M(mat);
         }
 
-        Material(Material const &other) : pimpl(other.pimpl->clone())
+        ~Material()
         {
+            pimpl()->~MatConcept();
+        }
+
+        Material(Material const &other)
+        {
+            other.pimpl()->clone(pimpl());
         }
 
         Material &operator=(Material const &other)
         {
-            other.pimpl->clone().swap(pimpl);
+            Material tmp(other);
+            buffer.swap(tmp.buffer);
             return *this;
         }
 
-        // Material(Material &&other) = default;
-        // Material &operator=(Material &&other) = default;
+        Material(Material &&other)
+        {
+            other.pimpl()->move(pimpl());
+        }
+        Material &operator=(Material &&other)
+        {
+            Material tmp(std::move(other));
+            buffer.swap(tmp.buffer);
+            return *this;
+        }
     };
 
 }

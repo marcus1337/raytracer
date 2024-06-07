@@ -34,6 +34,7 @@
 #include <ranges>
 #include <sstream>
 #include <random>
+#include <type_traits>
 
 #include "spdlog/spdlog.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
