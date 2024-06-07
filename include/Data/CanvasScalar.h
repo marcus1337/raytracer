@@ -12,7 +12,8 @@ namespace rt
         CanvasScalar() = default;
         CanvasScalar(std::size_t width, std::size_t height) : width(width), height(height)
         {
-            scalarArrays.resize(width * height);
+            numSamples.resize(width * height, 0);
+            values.resize(width * height, glm::vec3(0.0f));
             clear(Color());
         }
         CanvasScalar(const rt::Size &size) : CanvasScalar(size.width, size.height)
@@ -21,9 +22,10 @@ namespace rt
 
         void clear(const Color &value)
         {
-            for (std::size_t i = 0; i < scalarArrays.size(); i++)
+            for (std::size_t i = 0; i < values.size(); i++)
             {
-                scalarArrays[i].clear();
+                values[i] = glm::vec3(0.0f);
+                numSamples[i] = 0;
             }
         }
 
@@ -39,17 +41,7 @@ namespace rt
 
         Color at(std::size_t x, std::size_t y) const
         {
-            glm::vec3 accumulatedScalar(0.0f);
-            const auto &scalars = scalarArrays.at(getIndex(x, y));
-            if (scalars.empty())
-            {
-                return glm::vec3(0);
-            }
-            for (const auto &scalar : scalars)
-            {
-                accumulatedScalar += scalar;
-            }
-            return Color(accumulatedScalar / scalars.size());
+            return Color(values.at(getIndex(x, y)));
         }
 
         Color at(const rt::Point &point) const
@@ -59,8 +51,11 @@ namespace rt
 
         void add(std::size_t x, std::size_t y, const glm::vec3 &scalar)
         {
-            scalarArrays[getIndex(x, y)].push_back(scalar);
+            const auto index = getIndex(x, y);
+            numSamples[index] += 1;
+            values[index] = (values[index] * (numSamples[index] - 1) + scalar) / numSamples[index];
         }
+        
         void add(const Point &p, const glm::vec3 &scalar)
         {
             add(p.x, p.y, scalar);
@@ -92,7 +87,8 @@ namespace rt
     private:
         std::size_t width;
         std::size_t height;
-        std::vector<std::vector<glm::vec3>> scalarArrays;
+        std::vector<glm::vec3> values;
+        std::vector<unsigned int> numSamples;
 
         std::size_t getIndex(std::size_t x, std::size_t y) const
         {
