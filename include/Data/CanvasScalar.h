@@ -14,13 +14,12 @@ namespace rt
         {
             numSamples.resize(width * height, 0);
             values.resize(width * height, glm::vec3(0.0f));
-            clear(Color());
         }
         CanvasScalar(const rt::Size &size) : CanvasScalar(size.width, size.height)
         {
         }
 
-        void clear(const Color &value)
+        void clear()
         {
             for (std::size_t i = 0; i < values.size(); i++)
             {
@@ -55,7 +54,7 @@ namespace rt
             numSamples[index] += 1;
             values[index] = (values[index] * (numSamples[index] - 1) + scalar) / numSamples[index];
         }
-        
+
         void add(const Point &p, const glm::vec3 &scalar)
         {
             add(p.x, p.y, scalar);

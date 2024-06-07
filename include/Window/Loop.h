@@ -45,6 +45,7 @@ namespace rt
             if (renderTimeController.shouldUpdate())
             {
                 renderTimeController.beforeFrame();
+                frame.addSamples();
                 frame.render(window.renderer, window.getSize());
                 renderTimeController.afterFrame();
                 renderTimeController.delay();

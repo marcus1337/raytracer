@@ -18,39 +18,71 @@ namespace rt
     class CanvasMaker
     {
     public:
-        CanvasMaker(const Size &canvasSize)
+        CanvasMaker(const Size &canvasSize) : canvasScalar(canvasSize)
         {
+            spdlog::log(spdlog::level::info, "Canvas Size {} {}", canvasSize.width, canvasSize.height);
             camera = std::make_unique<PerspectiveCamera>(canvasSize, 90.0f);
         }
 
-        Canvas makeCanvas(const World &world) const
+        Canvas makeCanvas() const
         {
             return makeCanvas(world, raySpawner.getPixelRays(*camera));
         }
 
-        Canvas makeCanvasAntialiased(const World &world) const
+        Canvas makeCanvasAntialiased() const
         {
-            return makeSampledCanvasParallel(world);
+            return canvasScalar.getCanvas();
+        }
+
+        void sampleCanvas()
+        {
+            sampleCanvasParallel(world, 5);
+        }
+
+        void setWorld(const World &world)
+        {
+            this->world = world;
+            canvasScalar.clear();
         }
 
     private:
         std::unique_ptr<Camera> camera;
         RaySpawner raySpawner;
         Tracer tracer;
+        World world;
+        CanvasScalar canvasScalar;
 
-        Canvas makeSampledCanvasParallel(const World &world) const
+        std::vector<Ray> getSampleRays(const Point &p, unsigned int numSamples) const
         {
-            CanvasScalar canvasScalar(camera->getViewSize());
+            std::vector<Ray> rays;
+            for (std::size_t i = 0; i < numSamples; i++)
+            {
+                rays.push_back(raySpawner.getSampleRay(p, *camera));
+            }
+            return rays;
+        }
+
+        std::vector<glm::vec3> getColorSamples(const World &world, const Point &p, unsigned int numSamples) const
+        {
+            std::vector<glm::vec3> colors;
+            for (const auto &ray : getSampleRays(p, numSamples))
+            {
+                colors.push_back(tracer.getRayColorScalar(ray, world));
+            }
+            return colors;
+        }
+
+        void sampleCanvasParallel(const World &world, int numSamplesPerPixel)
+        {
             const auto indices = canvasScalar.getIndices();
             std::for_each(std::execution::par, indices.begin(), indices.end(),
                           [&](const Point &p)
                           {
-                              for (const auto &ray : raySpawner.getSampleRays(p, *camera))
+                              for (const auto &sample : getColorSamples(world, p, numSamplesPerPixel))
                               {
-                                  canvasScalar.add(p, tracer.getRayColorScalar(ray, world));
+                                  canvasScalar.add(p, sample);
                               }
                           });
-            return canvasScalar.getCanvas();
         }
 
         Canvas makeCanvas(const World &world, const std::vector<std::pair<Point, Ray>> &pixelRayPairs) const

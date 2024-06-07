@@ -14,9 +14,14 @@ namespace rt
     class Frame
     {
     public:
-        Frame(const rt::Window &window) : targetTexture(window.renderer.makeTargetTexture(Size{420, 245}))
+        Frame(const rt::Window &window) : targetTexture(window.renderer.makeTargetTexture(Size{420, 245})), canvasMaker(getCanvasSize())
         {
-            canvas = CanvasMaker(getCanvasSize()).makeCanvasAntialiased(WorldMaker().makeWorld());
+            canvasMaker.setWorld(WorldMaker().makeWorld());
+        }
+
+        void addSamples()
+        {
+            canvasMaker.sampleCanvas();
         }
 
         void render(Renderer &renderer, const rt::Size &windowSize) const
@@ -26,15 +31,15 @@ namespace rt
         }
 
     private:
+        static constexpr int borderThickness = 10;
         TargetTexture targetTexture;
-        Canvas canvas;
-        const int borderThickness = 10;
+        CanvasMaker canvasMaker;
 
         Size getCanvasSize() const
         {
             Size canvasSize = targetTexture.getSize();
-            canvasSize.width -= borderThickness*2;
-            canvasSize.height -= borderThickness*2;
+            canvasSize.width -= borderThickness * 2;
+            canvasSize.height -= borderThickness * 2;
             return canvasSize;
         }
 
@@ -58,7 +63,7 @@ namespace rt
 
         std::unique_ptr<rt::RenderCommand> makePixelsCommand() const
         {
-            return std::make_unique<rt::cmd::Pixels>(canvas, Point{10, 10});
+            return std::make_unique<rt::cmd::Pixels>(canvasMaker.makeCanvasAntialiased(), Point{10, 10});
         }
 
         std::vector<std::unique_ptr<rt::RenderCommand>> getRenderCommands() const
