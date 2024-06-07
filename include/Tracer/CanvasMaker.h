@@ -36,7 +36,7 @@ namespace rt
 
         void sampleCanvas()
         {
-            sampleCanvasParallel(world, 5);
+            sampleCanvasParallel(world, 2);
         }
 
         void setWorld(const World &world)

@@ -23,6 +23,8 @@ namespace rt
                 {
                     spdlog::log(spdlog::level::info, "Window size: {} {}", event.window.data1, event.window.data2);
                 }
+
+                processMoveEvent(event);
             }
         }
 
@@ -30,6 +32,8 @@ namespace rt
         {
             return quit;
         }
+
+        std::vector<glm::vec3> moves;
 
     private:
         bool quit = false;
@@ -50,6 +54,33 @@ namespace rt
                 return true;
             }
             return false;
+        }
+
+        void processMoveEvent(const SDL_Event &event)
+        {
+            static constexpr float v = 0.02f;
+            if (event.type == SDL_KEYDOWN)
+            {
+                switch (event.key.keysym.sym)
+                {
+                case SDLK_a:
+                    spdlog::info("A key pressed.");
+                    moves.push_back(glm::vec3(-v, 0, 0));
+                    break;
+                case SDLK_s:
+                    spdlog::info("S key pressed.");
+                    moves.push_back(glm::vec3(0, 0, -v));
+                    break;
+                case SDLK_w:
+                    spdlog::info("W key pressed.");
+                    moves.push_back(glm::vec3(0, 0, v));
+                    break;
+                case SDLK_d:
+                    spdlog::info("D key pressed.");
+                    moves.push_back(glm::vec3(v, 0, 0));
+                    break;
+                }
+            }
         }
     };
 }

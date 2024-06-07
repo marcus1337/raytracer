@@ -13,8 +13,6 @@ namespace rt
     public:
         Loop() : frame(window), renderTimeController(25), eventTimeController(60)
         {
-            Transform t;
-            frame.setCameraTransform(t);
         }
 
         void run()
@@ -32,11 +30,23 @@ namespace rt
         FrameTimeController renderTimeController;
         FrameTimeController eventTimeController;
 
+        void handleMoves()
+        {
+            for (const auto &t : eventHandler.moves)
+            {
+                auto tmp = frame.getCameraTransform();
+                tmp.pos += t;
+                frame.setCameraTransform(tmp);
+            }
+            eventHandler.moves.clear();
+        }
+
         void handleEvents()
         {
             if (eventTimeController.shouldUpdate())
             {
                 eventTimeController.beforeFrame();
+                handleMoves();
                 eventHandler.processEvents();
                 eventTimeController.afterFrame();
             }
