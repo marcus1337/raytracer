@@ -32,10 +32,20 @@ namespace rt
 
         void handleMoves()
         {
-            for (const auto &t : eventHandler.getEventMoves())
+            float xMov = eventHandler.getXMov();
+            float zMov = eventHandler.getZMov();
+            if (xMov != 0 || zMov != 0)
             {
                 auto tmp = frame.getCameraTransform();
-                tmp.pos += t;
+                tmp.move(xMov, zMov);
+                frame.setCameraTransform(tmp);
+            }
+            float yaw = eventHandler.getYawMove();
+            float pitch = eventHandler.getPitchMove();
+            if (yaw != 0 || pitch != 0)
+            {
+                auto tmp = frame.getCameraTransform();
+                tmp.addRotation(yaw, pitch);
                 frame.setCameraTransform(tmp);
             }
         }

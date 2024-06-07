@@ -25,6 +25,7 @@ namespace rt
                 }
 
                 processMoveEvent(event);
+                processMouseEvent(event);
             }
         }
 
@@ -33,29 +34,43 @@ namespace rt
             return quit;
         }
 
-        std::vector<glm::vec3> getEventMoves()
+        float getXMov()
         {
-            std::vector<glm::vec3> moves;
-            static constexpr float v = 0.02f;
-
-            if (upPress)
-            {
-                moves.push_back(glm::vec3(0, 0, -v));
-            }
-            if (downPress)
-            {
-                moves.push_back(glm::vec3(0, 0, v));
-            }
             if (leftPress)
             {
-                moves.push_back(glm::vec3(-v, 0, 0));
+                return -v;
             }
             if (rightPress)
             {
-                moves.push_back(glm::vec3(v, 0, 0));
+                return v;
             }
+            return 0;
+        }
 
-            return moves;
+        float getZMov()
+        {
+            if (upPress)
+            {
+                return v;
+            }
+            if (downPress)
+            {
+                return -v;
+            }
+            return 0;
+        }
+
+        float getYawMove()
+        {
+            auto tmp = yaw;
+            yaw = 0;
+            return tmp;
+        }
+        float getPitchMove()
+        {
+            auto tmp = pitch;
+            pitch = 0;
+            return tmp;
         }
 
     private:
@@ -65,6 +80,13 @@ namespace rt
         bool downPress = false;
         bool leftPress = false;
         bool rightPress = false;
+        bool mouseLeftPress = false;
+
+        int mx, my;
+        float yaw = 0;
+        float pitch = 0;
+
+        static constexpr float v = 0.02f;
 
         bool isWindowResizeEvent(const SDL_Event &event) const
         {
@@ -82,6 +104,46 @@ namespace rt
                 return true;
             }
             return false;
+        }
+
+        void processMouseEvent(const SDL_Event &e)
+        {
+            if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_LEFT)
+            {
+                mouseLeftPress = true;
+                SDL_GetMouseState(&mx, &my);
+            }
+            if (e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LEFT)
+            {
+                mouseLeftPress = false;
+            }
+            if (e.type == SDL_MOUSEMOTION && mouseLeftPress)
+            {
+                int x, y;
+                SDL_GetMouseState(&x, &y);
+                int xOffset = x - mx;
+                int yOffset = my - y;
+                mx = x;
+                my = y;
+
+                float sensitivity = 0.1f;
+                xOffset *= sensitivity;
+                yOffset *= sensitivity;
+
+                yaw += xOffset;
+                pitch += yOffset;
+
+                if (pitch > 89.0f)
+                {
+                    pitch = 89.0f;
+                }
+                if (pitch < -89.0f)
+                {
+                    pitch = -89.0f;
+                }
+
+                spdlog::log(spdlog::level::info, "yaw pitch {} {} ", yaw, pitch);
+            }
         }
 
         void processMoveEvent(const SDL_Event &event)
