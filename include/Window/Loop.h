@@ -32,13 +32,12 @@ namespace rt
 
         void handleMoves()
         {
-            for (const auto &t : eventHandler.moves)
+            for (const auto &t : eventHandler.getEventMoves())
             {
                 auto tmp = frame.getCameraTransform();
                 tmp.pos += t;
                 frame.setCameraTransform(tmp);
             }
-            eventHandler.moves.clear();
         }
 
         void handleEvents()
