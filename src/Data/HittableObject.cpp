@@ -3,13 +3,18 @@
 namespace rt
 {
 
-    HittableObject::HittableObject(const Material &mat) : mat(mat)
+    glm::vec3 getOutwardNormal(const Sphere &sphere, const glm::vec3 &surfacePoint)
     {
+        return sphere.getOutwardNormal(surfacePoint);
+    }
+    std::vector<float> getIntersectionDistances(const Sphere &sphere, const Ray &r)
+    {
+        return sphere.getIntersectionDistances(r);
     }
 
     std::optional<HitRecord> HittableObject::hit(const Ray &r, const Interval &rT) const
     {
-        const auto hitT = rT.getMinValidParameter(getIntersectionDistances(r));
+        const auto hitT = rT.getMinValidParameter(getIntersectionDistances(*this, r));
         if (hitT.has_value())
         {
             return getHitRecord(r, hitT.value());
@@ -26,9 +31,8 @@ namespace rt
         auto &loc = rec.loc;
         rec.t = t;
         loc.p = r.at(rec.t);
-        loc.setFaceNormal(r, getOutwardNormal(loc.p));
+        loc.setFaceNormal(r, getOutwardNormal(*this, loc.p));
         rec.mat = mat;
         return rec;
     }
-
 }

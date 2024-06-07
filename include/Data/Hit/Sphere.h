@@ -1,27 +1,25 @@
 #pragma once
 #include "pch.h"
-#include "Hittable.h"
-#include "HittableObject.h"
 
 namespace rt
 {
-    class Sphere : public HittableObject
+    class Sphere
     {
     public:
-        Sphere(const glm::vec3 &center, float radius, const Material& mat) : HittableObject(mat), center(center), radius(radius)
+        Sphere(const glm::vec3 &center, float radius) : center(center), radius(radius)
         {
         }
 
-    private:
+    public:
         glm::vec3 center;
         float radius;
 
-        virtual glm::vec3 getOutwardNormal(const glm::vec3 &sp) const override
+        glm::vec3 getOutwardNormal(const glm::vec3 &sp) const
         {
             return (sp - center) / radius;
         }
 
-        virtual std::vector<float> getIntersectionDistances(const Ray &r) const override
+        std::vector<float> getIntersectionDistances(const Ray &r) const
         {
             std::vector<float> dists;
 
@@ -45,5 +43,5 @@ namespace rt
 
             return dists;
         }
-    };
+        };
 }

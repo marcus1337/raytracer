@@ -13,9 +13,9 @@ namespace rt
         {
         }
 
-        void add(std::unique_ptr<HittableObject> hittable)
+        void add(const HittableObject& hittable)
         {
-            hittables.push_back(std::move(hittable));
+            hittables.push_back(hittable);
         }
 
         void clear()
@@ -29,7 +29,7 @@ namespace rt
             for (const auto &hittable : hittables)
             {
                 auto closestHit = rec.has_value() ? rec.value().t : rT.getMax();
-                auto tmpRec = hittable->hit(r, Interval(rT.getMin(), closestHit));
+                auto tmpRec = hittable.hit(r, Interval(rT.getMin(), closestHit));
                 if (tmpRec.has_value())
                 {
                     rec = tmpRec;
@@ -39,6 +39,6 @@ namespace rt
         }
 
     private:
-        std::vector<std::unique_ptr<HittableObject>> hittables;
+        std::vector<HittableObject> hittables;
     };
 }

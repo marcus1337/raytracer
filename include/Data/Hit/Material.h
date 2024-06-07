@@ -101,6 +101,10 @@ namespace rt
         alignas(alignment) std::array<std::byte, buffersize> buffer;
 
     public:
+        Material() : Material(Lambertian(glm::vec3(0.1f)))
+        {
+        }
+
         template <typename MatT>
         Material(MatT mat)
         {

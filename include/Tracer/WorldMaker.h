@@ -24,9 +24,17 @@ namespace rt
             glm::vec3 c3(0.6, 0.2, 0.5);
             glm::vec3 c4(0.8, 0.7, 0.7);
 
-            world.add(std::make_unique<Sphere>(glm::vec3(0, 0, -1.5f), 0.5f, Lambertian(c1)));
-            world.add(std::make_unique<Sphere>(glm::vec3(1.f, 0, -1.5f), 0.5f, Metal(c2, 0.3f)));
-            world.add(std::make_unique<Sphere>(glm::vec3(0, -100.5, -1.5f), 100.0f, Lambertian(c4)));
+            Sphere sphere1(glm::vec3(0, 0, -1.5f), 0.5f);
+            Sphere sphere2(glm::vec3(1.f, 0, -1.5f), 0.5f);
+            Sphere sphere3(glm::vec3(0, -100.5, -1.5f), 100.0f);
+            
+            Material m1 = Lambertian(c1);
+            Material m2 = Metal(c3, 0.3);
+            Material m3 = Lambertian(c4);
+
+            world.add(HittableObject(sphere1, m1));
+            world.add(HittableObject(sphere2, m2));
+            world.add(HittableObject(sphere3, m3));
             return world;
         }
     };
