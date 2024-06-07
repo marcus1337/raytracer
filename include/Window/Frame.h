@@ -16,7 +16,7 @@ namespace rt
     public:
         Frame(const rt::Window &window) : targetTexture(window.renderer.makeTargetTexture(Size{420, 245}))
         {
-            canvas = CanvasMaker(getCanvasSize()).makeCanvasAntialiased(WorldMaker().makeSimpleWorld());
+            canvas = CanvasMaker(getCanvasSize()).makeCanvasAntialiased(WorldMaker().makeWorld());
         }
 
         void render(Renderer &renderer, const rt::Size &windowSize) const
