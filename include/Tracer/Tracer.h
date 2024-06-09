@@ -2,7 +2,6 @@
 #include "pch.h"
 #include "Data/Tracing/Ray.h"
 #include "Data/Color.h"
-#include "RayRand.h"
 
 namespace rt
 {
@@ -16,7 +15,6 @@ namespace rt
 
     private:
         Background background;
-        mutable RayRand rayRand;
         int maxDepth = 50;
 
         glm::vec3 getRayColorScalar(const Ray &r, const World &world, int depth) const

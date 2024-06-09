@@ -33,7 +33,7 @@ namespace rt
         }
 
     protected:
-        const float viewportHeight = 2.0f;
+        const float viewportHeight = 20.0f;
         const float viewportWidth;
         const glm::vec3 viewportU;
         const glm::vec3 viewportV;
