@@ -26,17 +26,17 @@ namespace rt
 
         Canvas makeCanvas() const
         {
-            return makeCanvas(world, raySpawner.getPixelRays(*camera));
-        }
-
-        Canvas makeCanvasAntialiased() const
-        {
             return canvasScalar.getCanvas();
         }
 
         void sampleCanvas()
         {
-            sampleCanvasParallel(world, 2);
+            const auto indices = canvasScalar.getIndices();
+            std::for_each(std::execution::par, indices.begin(), indices.end(),
+                          [&](const Point &p)
+                          {
+                              canvasScalar.add(p, getColorSample(world, p));
+                          });
         }
 
         void setWorld(const World &world)
@@ -63,48 +63,25 @@ namespace rt
         World world;
         CanvasScalar canvasScalar;
 
-        std::vector<Ray> getSampleRays(const Point &p, unsigned int numSamples) const
+        std::vector<Ray> getSampleRays(const Point &p) const
         {
             std::vector<Ray> rays;
-            for (std::size_t i = 0; i < numSamples; i++)
-            {
-                rays.push_back(raySpawner.getSampleRay(p, *camera));
-            }
+            rays.push_back(raySpawner.getSampleRay(p, *camera));
             return rays;
         }
 
-        std::vector<glm::vec3> getColorSamples(const World &world, const Point &p, unsigned int numSamples) const
+        glm::vec3 getColorSample(const World &world, const Point &p) const
         {
             std::vector<glm::vec3> colors;
-            for (const auto &ray : getSampleRays(p, numSamples))
+            const auto &r = raySpawner.getSampleRay(p, *camera);
+            colors.push_back(tracer.getRayColorScalar(r, world));
+            glm::vec3 meanColor(0.0f);
+            for (const auto &color : colors)
             {
-                colors.push_back(tracer.getRayColorScalar(ray, world));
+                meanColor += color;
             }
-            return colors;
-        }
-
-        void sampleCanvasParallel(const World &world, int numSamplesPerPixel)
-        {
-            const auto indices = canvasScalar.getIndices();
-            std::for_each(std::execution::par, indices.begin(), indices.end(),
-                          [&](const Point &p)
-                          {
-                              for (const auto &sample : getColorSamples(world, p, numSamplesPerPixel))
-                              {
-                                  canvasScalar.add(p, sample);
-                              }
-                          });
-        }
-
-        Canvas makeCanvas(const World &world, const std::vector<std::pair<Point, Ray>> &pixelRayPairs) const
-        {
-            CanvasScalar canvasScalar(camera->getViewSize());
-            for (const auto &pair : pixelRayPairs)
-            {
-                auto colorScalar = tracer.getRayColorScalar(pair.second, world);
-                canvasScalar.add(pair.first, colorScalar);
-            }
-            return canvasScalar.getCanvas();
+            meanColor /= static_cast<float>(colors.size());
+            return meanColor;
         }
     };
 }

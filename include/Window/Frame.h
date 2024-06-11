@@ -73,7 +73,7 @@ namespace rt
 
         std::unique_ptr<rt::RenderCommand> makePixelsCommand() const
         {
-            return std::make_unique<rt::cmd::Pixels>(canvasMaker.makeCanvasAntialiased(), Point{10, 10});
+            return std::make_unique<rt::cmd::Pixels>(canvasMaker.makeCanvas(), Point{10, 10});
         }
 
         std::vector<std::unique_ptr<rt::RenderCommand>> getRenderCommands() const

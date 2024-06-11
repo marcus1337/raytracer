@@ -30,7 +30,6 @@ namespace rt
                 const auto &loc = rec->loc;
                 const auto& mat = rec->mat;
                 auto scat = scatter(mat, r, rec->loc);
-                //auto scat = rec->mat->scatter(r, rec->loc);
                 if (scat.has_value())
                 {
                     return scat->attenuation * getRayColorScalar(scat->r, world, depth - 1);
