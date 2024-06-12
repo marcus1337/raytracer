@@ -72,7 +72,7 @@ namespace rt
 
         glm::vec3 getColorSample(const World &world, const Point &p) const
         {
-            const std::size_t numStratas = 4;
+            const std::size_t numStratas = 2;
             return getMeanColor(getStratifiedColorSamples(world, p, {numStratas, numStratas}));
         }
 
