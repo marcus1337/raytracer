@@ -21,7 +21,7 @@ namespace rt
 
         void addSamples()
         {
-            canvasMaker.sampleCanvas();
+            canvasMaker.sampleCanvasCPU();
         }
 
         void render(Renderer &renderer, const rt::Size &windowSize) const

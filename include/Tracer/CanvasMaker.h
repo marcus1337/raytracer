@@ -29,6 +29,16 @@ namespace rt
             return canvasScalar.getCanvas();
         }
 
+        void sampleCanvasCPU()
+        {
+            const auto indices = canvasScalar.getIndices();
+            std::for_each(std::execution::par, indices.begin(), indices.end(),
+                          [&](const Point &p)
+                          {
+                              canvasScalar.add(p, getColorSample(world, p));
+                          });
+        }
+
         void sampleCanvas()
         {
             const auto indices = canvasScalar.getIndices();
