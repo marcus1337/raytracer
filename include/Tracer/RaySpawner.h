@@ -6,6 +6,7 @@
 #include "Data/Geometry/Point.h"
 #include "Data/Tracing/Camera.h"
 #include "Tracer/Rand.h"
+#include "Tracer/UV.h"
 
 namespace rt
 {
