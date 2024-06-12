@@ -72,13 +72,12 @@ namespace rt
 
         glm::vec3 getColorSample(const World &world, const Point &p) const
         {
-            return getMeanColor(getStratifiedColorSamples(world, p, {1,1}));
+            return getMeanColor(getStratifiedColorSamples(world, p, {1, 1}));
         }
 
         std::vector<glm::vec3> getStratifiedColorSamples(const World &world, const Point &p, const Size &numStratas) const
         {
             std::vector<glm::vec3> colors;
-            const auto &r = raySpawner.getSampleRay(p, *camera);
             for (const auto &r : raySpawner.getRaysStratified(p, *camera, numStratas))
             {
                 colors.push_back(tracer.getRayColorScalar(r, world));

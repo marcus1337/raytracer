@@ -5,7 +5,6 @@
 #include "Data/Geometry/Size.h"
 #include "Data/Geometry/Point.h"
 #include "Data/Tracing/Camera.h"
-#include "Tracer/Rand.h"
 #include "Tracer/UV.h"
 
 namespace rt
@@ -17,34 +16,23 @@ namespace rt
         {
         }
 
-        std::vector<std::pair<Point, Ray>> getPixelRays(const Camera &camera) const
-        {
-            const auto &viewSize = camera.getViewSize();
-            std::vector<std::pair<Point, Ray>> pixelRays;
-            for (const auto &p : getPixelIndices(viewSize))
-            {
-                const auto uv = getUVPoint(p, viewSize);
-                const auto ray = camera.spawnRay(uv.x, uv.y);
-                pixelRays.push_back({p, ray});
-            }
-            return pixelRays;
-        }
-
         Ray getSampleRay(const Point &p, const Camera &camera) const
         {
-            return camera.spawnRay(getUVPointSample(p, camera.getViewSize()));
+            return camera.spawnRay(UV(camera.getViewSize()).getUVCenter(p));
         }
 
-        std::vector<Ray> getRaysStratified(const Point &p, const Camera &camera, const Size &numStratas) const
+        std::vector<Ray> getRaysStratified(const Point &p, const Camera &camera, const Size &strataSize) const
         {
-            return {};
+            std::vector<Ray> rays;
+            UV uvHandler(camera.getViewSize());
+            for (const auto &uv : uvHandler.getUVStratifiedCenters(p, strataSize))
+            {
+                rays.push_back(camera.spawnRay(uv));
+            }
+            return rays;
         }
 
     private:
-        static thread_local Rand rand;
-
-        //std::vector<glm::vec2> getUVPoints(const Point& p, )
-
         std::vector<Point> getPixelIndices(const Size &size) const
         {
             std::vector<Point> points;
@@ -56,32 +44,6 @@ namespace rt
                 }
             }
             return points;
-        }
-
-        float getDelta(int numElements) const
-        {
-            return 1.0f / numElements;
-        }
-
-        glm::vec2 getUVOffsetPointSample(const Size &size) const
-        {
-            float uDelta = getDelta(size.width);
-            float vDelta = getDelta(size.height);
-            return glm::vec2(rand.getFloat(0, uDelta) - uDelta, rand.getFloat(0, vDelta) - vDelta);
-        }
-
-        glm::vec2 getUVPointSample(const Point &p, const Size &size) const
-        {
-            return getUVPoint(p, size) + getUVOffsetPointSample(size);
-        }
-
-        glm::vec2 getUVPoint(const Point &p, const Size &size) const
-        {
-            const float pixelDeltaU = (1.0f / size.width);
-            const float pixelDeltaV = (1.0f / size.height);
-            float u = pixelDeltaU * p.x;
-            float v = pixelDeltaV * p.y;
-            return glm::vec2(u, v) + glm::vec2(pixelDeltaU, pixelDeltaV) / 2.0f;
         }
     };
 }

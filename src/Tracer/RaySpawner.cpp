@@ -2,5 +2,4 @@
 
 using namespace rt;
 
-Rand thread_local RaySpawner::rand;
 
