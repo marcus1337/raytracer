@@ -93,7 +93,7 @@ namespace rt
 
         glm::vec2 getJitter(const glm::vec2 &delta) const
         {
-            float m = 1.5f; // multiplier
+            float m = 0.5f; // multiplier
             auto uD = delta.x * m;
             auto vD = delta.y * m;
             float uJ = rand.getFloat(0, uD) - uD;
