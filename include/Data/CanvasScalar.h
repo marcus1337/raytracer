@@ -48,16 +48,20 @@ namespace rt
             return at(point.x, point.y);
         }
 
-        void add(std::size_t x, std::size_t y, const glm::vec3 &scalar)
+        void add(std::size_t index, const glm::vec3 &scalar)
         {
-            const auto index = getIndex(x, y);
             numSamples[index] += 1;
             values[index] = (values[index] * (numSamples[index] - 1) + scalar) / numSamples[index];
         }
 
+        void add(std::size_t x, std::size_t y, const glm::vec3 &scalar)
+        {
+            add(getIndex(x, y), scalar);
+        }
+
         void add(const Point &p, const glm::vec3 &scalar)
         {
-            add(p.x, p.y, scalar);
+            add(getIndex(p), scalar);
         }
 
         Canvas getCanvas() const
@@ -83,16 +87,21 @@ namespace rt
             return indices;
         }
 
-    private:
-        std::size_t width;
-        std::size_t height;
-        std::vector<glm::vec3> values;
-        std::vector<unsigned int> numSamples;
+        std::size_t getIndex(const Point &p) const
+        {
+            return getIndex(p.x, p.y);
+        }
 
         std::size_t getIndex(std::size_t x, std::size_t y) const
         {
             return y * width + x;
         }
+
+    private:
+        std::size_t width;
+        std::size_t height;
+        std::vector<glm::vec3> values;
+        std::vector<unsigned int> numSamples;
     };
 
 }

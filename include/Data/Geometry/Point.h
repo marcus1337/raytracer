@@ -12,6 +12,13 @@ namespace rt
         {
         }
 
+        bool operator<(const Point &p) const
+        {
+            if (x == p.x)
+                return y < p.y;
+            return x < p.x;
+        }
+
         bool operator==(const Point &p) const
         {
             return x == p.x && y == p.y;

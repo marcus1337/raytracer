@@ -32,12 +32,24 @@ namespace rt
         void sampleCanvas()
         {
             const auto indices = canvasScalar.getIndices();
+            const auto &indexedRays = getPointRaysIndexed();
+            std::vector<glm::vec3> pointSamples(indices.size());
+            std::vector<std::size_t> pointIndices;
+            for (const auto &p : indices)
+            {
+                pointIndices.push_back(canvasScalar.getIndex(p));
+            }
 
-            std::for_each(std::execution::par, indices.begin(), indices.end(),
-                          [&](const Point &p)
+            std::for_each(std::execution::par, pointIndices.begin(), pointIndices.end(),
+                          [&](std::size_t index)
                           {
-                              canvasScalar.add(p, getColorSample(world, p));
+                              pointSamples[index] = getMeanColor(getColorSamples(world, indexedRays.at(index)));
                           });
+
+            for (std::size_t i = 0; i < pointSamples.size(); i++)
+            {
+                canvasScalar.add(i, pointSamples[i]);
+            }
         }
 
         void setWorld(const World &world)
@@ -63,6 +75,26 @@ namespace rt
         Tracer tracer;
         World world;
         CanvasScalar canvasScalar;
+
+        std::map<Point, std::vector<Ray>> getPointRays() const
+        {
+            std::map<Point, std::vector<Ray>> pointRays;
+            for (const auto &p : canvasScalar.getIndices())
+            {
+                pointRays[p] = getStratifiedRays(p);
+            }
+            return pointRays;
+        }
+
+        std::map<std::size_t, std::vector<Ray>> getPointRaysIndexed() const
+        {
+            std::map<std::size_t, std::vector<Ray>> indexedRays;
+            for (const auto &[key, value] : getPointRays())
+            {
+                indexedRays[canvasScalar.getIndex(key)] = value;
+            }
+            return indexedRays;
+        }
 
         std::vector<Ray> getSampleRays(const Point &p) const
         {
