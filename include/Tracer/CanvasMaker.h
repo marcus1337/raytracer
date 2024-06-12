@@ -32,6 +32,7 @@ namespace rt
         void sampleCanvas()
         {
             const auto indices = canvasScalar.getIndices();
+
             std::for_each(std::execution::par, indices.begin(), indices.end(),
                           [&](const Point &p)
                           {
@@ -70,16 +71,26 @@ namespace rt
             return rays;
         }
 
-        glm::vec3 getColorSample(const World &world, const Point &p) const
+        Size getStrataSize() const
         {
-            const std::size_t numStratas = 2;
-            return getMeanColor(getStratifiedColorSamples(world, p, {numStratas, numStratas}));
+            int numStratas = 2;
+            return {numStratas, numStratas};
         }
 
-        std::vector<glm::vec3> getStratifiedColorSamples(const World &world, const Point &p, const Size &numStratas) const
+        glm::vec3 getColorSample(const World &world, const Point &p) const
+        {
+            return getMeanColor(getColorSamples(world, getStratifiedRays(p)));
+        }
+
+        std::vector<Ray> getStratifiedRays(const Point &p) const
+        {
+            return raySpawner.getRaysStratified(p, *camera, getStrataSize());
+        }
+
+        std::vector<glm::vec3> getColorSamples(const World &world, const std::vector<Ray> &rays) const
         {
             std::vector<glm::vec3> colors;
-            for (const auto &r : raySpawner.getRaysStratified(p, *camera, numStratas))
+            for (const auto &r : rays)
             {
                 colors.push_back(tracer.getRayColorScalar(r, world));
             }
