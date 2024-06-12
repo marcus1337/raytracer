@@ -2,6 +2,7 @@
 add_executable(${PROJECT_NAME} 
 "src/main.cpp"
 "src/Tracer/RaySpawner.cpp"
+"src/Tracer/UV.cpp"
 "src/Data/Material.cpp"
 "src/Data/HittableObject.cpp"
 

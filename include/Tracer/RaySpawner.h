@@ -25,7 +25,7 @@ namespace rt
         {
             std::vector<Ray> rays;
             UV uvHandler(camera.getViewSize());
-            for (const auto &uv : uvHandler.getUVStratifiedCenters(p, strataSize))
+            for (const auto &uv : uvHandler.getUVJitteredStratifiedCenters(p, strataSize))
             {
                 rays.push_back(camera.spawnRay(uv));
             }
