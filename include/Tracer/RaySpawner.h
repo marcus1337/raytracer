@@ -34,8 +34,15 @@ namespace rt
             return camera.spawnRay(getUVPointSample(p, camera.getViewSize()));
         }
 
+        std::vector<Ray> getRaysStratified(const Point &p, const Camera &camera, const Size &numStratas) const
+        {
+            return {};
+        }
+
     private:
         static thread_local Rand rand;
+
+        //std::vector<glm::vec2> getUVPoints(const Point& p, )
 
         std::vector<Point> getPixelIndices(const Size &size) const
         {
