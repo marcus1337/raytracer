@@ -32,7 +32,6 @@ namespace rt
         void sampleCanvas()
         {
             const auto indices = canvasScalar.getIndices();
-            const auto &indexedRays = getPointRaysIndexed();
             std::vector<glm::vec3> pointSamples(indices.size());
             std::vector<std::size_t> pointIndices;
             for (const auto &p : indices)
@@ -40,16 +39,22 @@ namespace rt
                 pointIndices.push_back(canvasScalar.getIndex(p));
             }
 
-            std::for_each(std::execution::par, pointIndices.begin(), pointIndices.end(),
-                          [&](std::size_t index)
-                          {
-                              pointSamples[index] = getMeanColor(getColorSamples(world, indexedRays.at(index)));
-                          });
+            setSamples(pointIndices, pointSamples);
 
             for (std::size_t i = 0; i < pointSamples.size(); i++)
             {
                 canvasScalar.add(i, pointSamples[i]);
             }
+        }
+
+        void setSamples(const std::vector<std::size_t> &pointIndices, std::vector<glm::vec3> &pointSamples) const
+        {
+            const auto &indexedRays = getPointRaysIndexed();
+            std::for_each(std::execution::par, pointIndices.begin(), pointIndices.end(),
+                          [&](std::size_t index)
+                          {
+                              pointSamples[index] = getMeanColor(getColorSamples(world, indexedRays.at(index)));
+                          });
         }
 
         void setWorld(const World &world)
