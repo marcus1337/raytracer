@@ -3,6 +3,7 @@
 #include "Data/Tracing/Ray.h"
 #include "Data/Hit/Interval.h"
 #include "Data/Hit/HitRecord.h"
+#include "Data/AABB.h"
 
 namespace rt
 {

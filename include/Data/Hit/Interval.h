@@ -14,6 +14,13 @@ namespace rt
         {
         }
 
+        static Interval fuse(const Interval &a, const Interval &b)
+        {
+            float maxValue = std::min(a.max, b.max);
+            float minValue = std::max(a.min, b.min);
+            return Interval(minValue, maxValue);
+        }
+
         std::optional<float> getMinValidParameter(const std::vector<float> &parameters) const
         {
             // Assumes parameters are stored in ASCENDING order.
