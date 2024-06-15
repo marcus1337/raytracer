@@ -65,20 +65,25 @@ namespace rt
 
         std::pair<float, float> intersect(const Interval &v, float rayOrig, float rayDir) const
         {
-            if (rayDir == 0.0f)
-            {
-                const auto inf = std::numeric_limits<float>::infinity();
-                if (rayOrig < v.getMin() || rayOrig > v.getMax())
-                    return {inf, -inf};
-                else
-                    return {-inf, inf};
-            }
+            return rayDir == 0.0f ? intersectZeroDir(v, rayOrig) : intersectTimes(v, rayOrig, rayDir);
+        }
 
+        std::pair<float, float> intersectTimes(const Interval &v, float rayOrig, float rayDir) const
+        {
             float t0 = fmin((v.getMin() - rayOrig) / rayDir,
                             (v.getMax() - rayOrig) / rayDir);
             float t1 = fmax((v.getMin() - rayOrig) / rayDir,
                             (v.getMax() - rayOrig) / rayDir);
             return {t0, t1};
+        }
+
+        std::pair<float, float> intersectZeroDir(const Interval &v, float rayOrig) const
+        {
+            const auto inf = std::numeric_limits<float>::infinity();
+            if (rayOrig < v.getMin() || rayOrig > v.getMax())
+                return {inf, -inf};
+            else
+                return {-inf, inf};
         }
     };
 }
