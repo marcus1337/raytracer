@@ -16,8 +16,8 @@ namespace rt
 
         static Interval fuse(const Interval &a, const Interval &b)
         {
-            float maxValue = std::min(a.max, b.max);
-            float minValue = std::max(a.min, b.min);
+            float maxValue = std::max(a.max, b.max);
+            float minValue = std::min(a.min, b.min);
             return Interval(minValue, maxValue);
         }
 
